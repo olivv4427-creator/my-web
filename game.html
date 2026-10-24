@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>역사 3대 혁명 순발력 게임</title>
+  <title>역사 3대 혁명 순발력 게임 - 자유의 여신 테마</title>
   <style>
-    /* 기본 스타일 초기화 및 폰트 설정 */
+    /* 기본 스타일 초기화 및 고급 고전풍 폰트 설정 */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       user-select: none;
       -webkit-user-select: none;
-      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      font-family: 'Georgia', 'Apple SD Gothic Neo', 'Noto Sans KR', serif;
     }
 
     body {
-      background-color: #121223;
+      background: #0b0d12;
       color: #ffffff;
       min-height: 100vh;
       display: flex;
@@ -27,15 +27,15 @@
       overflow-x: hidden;
     }
 
-    /* 게임 컨테이너 */
+    /* 게임 컨테이너 - 명화 분위기의 고급스러운 골드/다크 테두리 */
     #game-container {
       width: 100%;
-      max-width: 500px;
-      background: #1a1a3a;
+      max-width: 520px;
+      background: linear-gradient(160deg, #181a24 0%, #0d0f17 100%);
       border-radius: 20px;
       padding: 20px 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-      border: 2px solid #2a2a5a;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(212, 175, 55, 0.15);
+      border: 2px solid #b8860b;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -50,10 +50,11 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
-      background: #0f1123;
+      background: rgba(15, 17, 28, 0.85);
       padding: 12px 20px;
       border-radius: 14px;
-      border: 1px solid #2a2a5a;
+      border: 1px solid #d4af37;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
     }
 
     .status-item {
@@ -63,142 +64,146 @@
     }
 
     .status-label {
-      font-size: 13px;
-      color: #8d99ae;
+      font-size: 12px;
+      color: #c5a059;
       margin-bottom: 2px;
       font-weight: bold;
+      letter-spacing: 0.5px;
     }
 
     .status-value {
       font-size: 26px;
       font-weight: 900;
-      color: #ff4757;
+      color: #ff5252;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
 
     .status-value.score {
-      color: #2ed573;
+      color: #ffd700;
     }
 
     /* 5초 타임 바 */
     .timer-bar-container {
       width: 100%;
       height: 12px;
-      background: #2b2e4a;
+      background: #1c1f2e;
       border-radius: 6px;
       overflow: hidden;
       margin-bottom: 12px;
-      border: 1px solid #3a3d5c;
+      border: 1px solid #8b6508;
     }
 
     .timer-bar {
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, #ff4757, #ffa502);
+      background: linear-gradient(90deg, #ff4d4d, #f39c12, #00d2d3);
       transition: width 0.05s linear;
     }
 
     /* 스테이지 배지 */
     .stage-badge {
-      background: #3742fa;
-      color: #fff;
-      padding: 6px 16px;
+      background: linear-gradient(135deg, #8b0000, #b22222);
+      color: #fff8dc;
+      padding: 6px 18px;
       border-radius: 20px;
       font-size: 15px;
       font-weight: bold;
       margin-bottom: 10px;
-      letter-spacing: 0.5px;
-      box-shadow: 0 4px 10px rgba(55, 66, 250, 0.3);
+      letter-spacing: 1px;
+      border: 1px solid #ffd700;
+      box-shadow: 0 4px 12px rgba(178, 34, 34, 0.4);
     }
 
-    /* 노동자 캐릭터 스테이지 영역 */
+    /* 들라크루아 명화 배경 무대 */
     .character-stage {
       width: 100%;
-      height: 110px;
-      background: linear-gradient(180deg, #1b203e 0%, #2c2c54 100%);
-      border-radius: 12px;
+      height: 150px;
+      border-radius: 14px;
       margin-bottom: 14px;
       position: relative;
       overflow: hidden;
-      border: 1px solid #3a3d5c;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
+      border: 1px solid #d4af37;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+      background: #10121a;
     }
 
-    .ground-line {
+    /* 들라크루아 배경 연기 & 전장 연출 SVG */
+    .masterpiece-bg {
       position: absolute;
-      bottom: 0;
+      top: 0;
+      left: 0;
       width: 100%;
-      height: 16px;
-      background: #474787;
-      border-top: 2px solid #706fd3;
+      height: 100%;
+      z-index: 1;
     }
 
-    /* 유럽 노동자 캐릭터 SVG & 애니메이션 */
-    .worker-character {
-      width: 70px;
-      height: 90px;
+    /* 민중을 이끄는 자유의 여신 캐릭터 */
+    .liberty-character {
+      width: 90px;
+      height: 110px;
       position: absolute;
-      bottom: 10px;
-      left: 20px;
+      bottom: 8px;
+      left: 15px;
       transition: left 0.4s ease, transform 0.4s ease;
-      z-index: 2;
+      z-index: 3;
     }
 
-    /* 캐릭터 동작 클래스들 */
-    .worker-character.walk {
-      animation: walkBob 0.3s infinite alternate ease-in-out;
+    /* 캐릭터 모션 */
+    .liberty-character.walk {
+      animation: flagWaveWalk 0.35s infinite alternate ease-in-out;
     }
 
-    .worker-character.fall {
-      transform: rotate(-90deg) translateY(30px);
-      transition: transform 0.3s ease;
+    .liberty-character.fall {
+      transform: rotate(-90deg) translateY(40px);
+      transition: transform 0.35s ease;
     }
 
-    .worker-character.cheer {
-      left: calc(50% - 35px) !important;
-      animation: cheerJump 0.5s infinite alternate ease-in-out;
+    .liberty-character.cheer {
+      left: calc(50% - 45px) !important;
+      animation: victoryCheer 0.6s infinite alternate ease-in-out;
     }
 
-    @keyframes walkBob {
-      0% { transform: translateY(0) rotate(-2deg); }
-      100% { transform: translateY(-8px) rotate(4deg); }
+    @keyframes flagWaveWalk {
+      0% { transform: translateY(0) rotate(-3deg); }
+      100% { transform: translateY(-10px) rotate(4deg); }
     }
 
-    @keyframes cheerJump {
-      0% { transform: translateY(0) scale(1.05); }
-      100% { transform: translateY(-16px) scale(1.1); }
+    @keyframes victoryCheer {
+      0% { transform: translateY(0) scale(1.08); }
+      100% { transform: translateY(-18px) scale(1.15); }
     }
 
-    /* 문제 카드 */
+    /* 문제 카드 - 연풍 캔버스 스타일 */
     .question-card {
       width: 100%;
-      background: #0f1123;
+      background: linear-gradient(180deg, #1f2233 0%, #141622 100%);
       border-radius: 14px;
       padding: 16px;
       margin-bottom: 14px;
       text-align: center;
-      min-height: 100px;
+      min-height: 105px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      border: 1px solid #2a2a5a;
+      border: 1px solid #7a6322;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
 
     .question-desc {
       font-size: 13px;
-      color: #70a1ff;
+      color: #ffd700;
       margin-bottom: 6px;
       font-weight: bold;
+      letter-spacing: 0.5px;
     }
 
     .question-text {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
-      line-height: 1.4;
+      line-height: 1.45;
       word-break: keep-all;
-      color: #ffffff;
+      color: #f1f2f6;
     }
 
     /* 보기 버튼 목록 */
@@ -211,25 +216,27 @@
 
     .option-btn {
       width: 100%;
-      background: #2f3542;
+      background: linear-gradient(180deg, #2c3045 0%, #1e2130 100%);
       color: #ffffff;
-      border: 2px solid #57606f;
+      border: 1px solid #8b7536;
       padding: 14px 16px;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
       cursor: pointer;
       outline: none;
-      transition: transform 0.05s ease, background-color 0.1s ease, border-color 0.1s ease;
+      transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
       word-break: keep-all;
       text-align: center;
       -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
     .option-btn:active {
       transform: scale(0.97);
-      background: #57606f;
-      border-color: #2ed573;
+      background: #8b0000;
+      border-color: #ffd700;
+      color: #ffffff;
     }
 
     /* 화면 오버레이 공통 */
@@ -239,7 +246,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(18, 18, 35, 0.96);
+      background: rgba(10, 11, 16, 0.96);
       border-radius: 20px;
       display: flex;
       flex-direction: column;
@@ -251,16 +258,17 @@
     }
 
     .overlay h1 {
-      font-size: 26px;
+      font-size: 28px;
       margin-bottom: 12px;
-      color: #ff4757;
+      color: #ffd700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
     }
 
     .overlay p {
       font-size: 15px;
-      color: #dfe4ea;
+      color: #dcdde1;
       margin-bottom: 24px;
-      line-height: 1.5;
+      line-height: 1.6;
       word-break: keep-all;
     }
 
@@ -271,7 +279,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(15, 17, 35, 0.92);
+      background: rgba(8, 9, 14, 0.94);
       border-radius: 20px;
       display: flex;
       flex-direction: column;
@@ -282,30 +290,29 @@
     }
 
     .stage-title-card {
-      background: linear-gradient(135deg, #2ed573, #1e90ff);
-      padding: 24px 32px;
+      background: linear-gradient(135deg, #1e2436, #3a1c1c);
+      padding: 26px 36px;
       border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      border: 2px solid #ffd700;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(255, 215, 0, 0.2);
       text-align: center;
-      transform: scale(1);
       animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .stage-title-card h2 {
-      font-size: 16px;
-      color: #ffffff;
+      font-size: 15px;
+      color: #ff6b6b;
       text-transform: uppercase;
       letter-spacing: 2px;
       margin-bottom: 6px;
-      opacity: 0.9;
     }
 
     .stage-title-card h1 {
-      font-size: 32px;
-      color: #ffffff;
+      font-size: 30px;
+      color: #ffd700;
       font-weight: 900;
       margin: 0;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.6);
     }
 
     @keyframes popUp {
@@ -319,16 +326,16 @@
     }
 
     .start-btn {
-      background: #2ed573;
+      background: linear-gradient(135deg, #d4af37, #aa7c11);
       color: #000;
-      border: none;
-      padding: 16px 36px;
+      border: 1px solid #fff;
+      padding: 16px 40px;
       font-size: 20px;
       font-weight: 900;
       border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 6px 20px rgba(46, 213, 115, 0.4);
-      transition: transform 0.05s ease;
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+      transition: transform 0.08s ease, background 0.2s ease;
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -341,10 +348,11 @@
     }
 
     .final-score {
-      font-size: 48px;
+      font-size: 52px;
       font-weight: 900;
-      color: #2ed573;
-      margin: 12px 0;
+      color: #ffd700;
+      margin: 10px 0;
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
     }
   </style>
 </head>
@@ -371,45 +379,89 @@
   <!-- 현재 스테이지 배지 -->
   <div id="stage-badge" class="stage-badge">1단계: 영국 혁명</div>
 
-  <!-- 과거 유럽 노동자 캐릭터 진행 무대 -->
+  <!-- 들라크루아 명화 배경 테마 무대 -->
   <div class="character-stage">
-    <div class="ground-line"></div>
-    
-    <!-- SVG 근대 유럽 노동자 캐릭터 -->
-    <div id="worker-char" class="worker-character">
-      <svg id="worker-svg" viewBox="0 0 100 130" width="100%" height="100%">
-        <!-- 몸통 & 조끼 -->
-        <rect x="35" y="55" width="30" height="38" rx="5" fill="#4b382a"/>
-        <path d="M 40 55 L 50 75 L 60 55 Z" fill="#d2dae2"/> <!-- 내부 와이셔츠 -->
-        <path d="M 48 62 L 52 62 L 50 75 Z" fill="#c0392b"/> <!-- 목 스카프/넥타이 -->
+    <!-- 명화 속 전투 배경 및 바리케이드, 프랑스 삼색 연기 연출 -->
+    <svg class="masterpiece-bg" viewBox="0 0 500 150" preserveAspectRatio="none">
+      <defs>
+        <!-- 하늘 노을 & 연기 그라데이션 -->
+        <linearGradient id="skyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#2b1a17" />
+          <stop offset="40%" stop-color="#4a3b32" />
+          <stop offset="70%" stop-color="#2c3a47" />
+          <stop offset="100%" stop-color="#0f141d" />
+        </linearGradient>
 
-        <!-- 바지 -->
-        <rect x="37" y="90" width="12" height="30" fill="#2c3e50"/>
-        <rect x="51" y="90" width="12" height="30" fill="#2c3e50"/>
-        <!-- 신발 -->
-        <ellipse cx="41" cy="122" rx="8" ry="4" fill="#1e272e"/>
-        <ellipse cx="57" cy="122" rx="8" ry="4" fill="#1e272e"/>
+        <!-- 명화 속 프랑스 삼색기 컬러 퍼짐 연기 -->
+        <radialGradient id="smokeBlue" cx="20%" cy="30%" r="50%">
+          <stop offset="0%" stop-color="#1e3799" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="#1e3799" stop-opacity="0" />
+        </radialGradient>
+        <radialGradient id="smokeRed" cx="80%" cy="30%" r="50%">
+          <stop offset="0%" stop-color="#b71540" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="#b71540" stop-opacity="0" />
+        </radialGradient>
+      </defs>
 
-        <!-- 오른팔/왼팔 -->
-        <path id="arm-left" d="M 33 58 Q 22 75 30 85" stroke="#4b382a" stroke-width="7" stroke-linecap="round" fill="none"/>
-        <path id="arm-right" d="M 67 58 Q 78 75 70 85" stroke="#4b382a" stroke-width="7" stroke-linecap="round" fill="none"/>
+      <!-- 하늘 배경 -->
+      <rect width="500" height="150" fill="url(#skyGrad)"/>
 
-        <!-- 얼굴 & 머리 -->
-        <circle cx="50" cy="38" r="16" fill="#f5cd79"/>
-        <!-- 눈/입 -->
-        <circle cx="55" cy="36" r="2" fill="#2c3e50"/>
-        <path id="mouth" d="M 52 44 Q 56 47 58 43" stroke="#2c3e50" stroke-width="2" fill="none"/>
+      <!-- 삼색 분위기 연기 실루엣 -->
+      <rect width="500" height="150" fill="url(#smokeBlue)"/>
+      <rect width="500" height="150" fill="url(#smokeRed)"/>
 
-        <!-- 19세기 빵모자 (Flat Cap) -->
-        <path d="M 30 32 Q 50 14 72 30 Q 75 36 68 38 L 32 38 Z" fill="#2d3436"/>
-        <path d="M 52 35 Q 68 35 74 37 L 58 40 Z" fill="#000000" opacity="0.4"/> <!-- 모자 챙 -->
+      <!-- 먼 노트르담 성당 실루엣 -->
+      <path d="M 400 100 L 400 65 L 415 65 L 415 100 L 425 100 L 425 60 L 440 60 L 440 100 Z" fill="#181e29" opacity="0.6"/>
+
+      <!-- 바리케이드 돌 더미와 목재 실루엣 -->
+      <path d="M 0 150 L 0 125 Q 60 115 130 135 Q 220 110 320 138 Q 420 120 500 130 L 500 150 Z" fill="#13151c"/>
+      <path d="M 20 135 L 70 120 L 110 140" stroke="#3d2b1f" stroke-width="4"/>
+      <path d="M 180 138 L 240 125 L 290 142" stroke="#2c1e17" stroke-width="5"/>
+      <path d="M 360 132 L 430 118 L 470 138" stroke="#3d2b1f" stroke-width="4"/>
+    </svg>
+
+    <!-- 민중을 이끄는 자유의 여신 SVG 캐릭터 -->
+    <div id="liberty-char" class="liberty-character">
+      <svg viewBox="0 0 120 140" width="100%" height="100%">
+        <!-- 삼색기 깃대 & 깃발 -->
+        <g id="flag-group">
+          <!-- 깃대 -->
+          <line x1="60" y1="10" x2="20" y2="120" stroke="#5c4033" stroke-width="4" stroke-linecap="round"/>
+          <!-- 프랑스 삼색기 (자유, 평등, 박애) -->
+          <g transform="rotate(-10 50 25)">
+            <rect x="50" y="15" width="18" height="36" fill="#002395"/>
+            <rect x="68" y="15" width="18" height="36" fill="#ffffff"/>
+            <rect x="86" y="15" width="18" height="36" fill="#ed2939"/>
+          </g>
+        </g>
+
+        <!-- 자유의 여신 드레스 (고전 드레이프 예복) -->
+        <path d="M 42 65 Q 35 95 38 125 L 68 125 Q 65 95 56 65 Z" fill="#d4c391"/>
+        <path d="M 45 75 Q 52 100 42 125" stroke="#b3a170" stroke-width="2" fill="none"/>
+
+        <!-- 오른팔 (깃발을 높이 드는 팔) -->
+        <path id="arm-flag" d="M 48 65 Q 55 40 58 22" stroke="#e0ac69" stroke-width="7" stroke-linecap="round" fill="none"/>
+
+        <!-- 왼팔 (총/민중을 유도하는 팔) -->
+        <path id="arm-left" d="M 44 67 Q 28 78 18 85" stroke="#e0ac69" stroke-width="6" stroke-linecap="round" fill="none"/>
+
+        <!-- 머리 및 프리기아 모자 (자유의 모자 - Phrygian cap) -->
+        <circle cx="48" cy="48" r="11" fill="#e0ac69"/>
+        <!-- 머리카락 -->
+        <path d="M 40 44 Q 35 55 38 62" stroke="#5c3a21" stroke-width="3" fill="none"/>
+        <!-- 붉은 프리기아 모자 -->
+        <path d="M 40 44 Q 46 28 58 35 Q 56 46 45 47 Z" fill="#c0392b"/>
+
+        <!-- 얼굴 윤곽 / 눈 / 입 -->
+        <circle cx="51" cy="47" r="1.5" fill="#2c3e50"/>
+        <path id="mouth" d="M 48 53 Q 52 56 54 53" stroke="#8e44ad" stroke-width="1.5" fill="none"/>
       </svg>
     </div>
   </div>
 
   <!-- 질문 영역 -->
   <div class="question-card">
-    <div class="question-desc">다음 역사적 사건을 5초 안에 순서대로 선택하세요!</div>
+    <div class="question-desc">다음 역사적 사건 직후 일어난 사건을 5초 안에 선택하세요!</div>
     <div id="question-text" class="question-text">게임 준비 중...</div>
   </div>
 
@@ -429,14 +481,14 @@
 
   <!-- 시작 화면 오버레이 -->
   <div id="start-overlay" class="overlay">
-    <h1>역사 3대 혁명<br>연대기 퀴즈</h1>
+    <h1>자유의 여신과 함께하는<br>역사 3대 혁명 퀴즈</h1>
     <p>
-      <b>역사적 순서대로 사건이 진행됩니다!</b><br><br>
-      영국 혁명 ➔ 미국 혁명 ➔ 프랑스 혁명<br><br>
-      제시된 상황 다음에 일어날 직후 사건을<br>
-      <b>5초 안에</b> 정확히 선택하세요!
+      <b>들라크루아의 민중을 이끄는 자유의 여신처럼!</b><br><br>
+      영국 혁명 ➔ 미국 혁명 ➔ 프랑스 혁명 순서대로<br>
+      제시된 역사적 사건 직후 일어난 일들을<br>
+      <b>5초 안에</b> 연속하여 맞혀보세요!
     </p>
-    <button class="start-btn" onclick="startGame()">게임 시작</button>
+    <button class="start-btn" onclick="startGame()">혁명 시작하기</button>
   </div>
 
   <!-- 게임 오버 오버레이 -->
@@ -450,10 +502,10 @@
 </div>
 
 <script>
-  // 지침 준수: 고유 게임 ID 선언
+  // 필수 지침 규격 준수
   const GAME_ID = 'my-game';
 
-  // 역사적 시간 순서에 따른 데이터 (영국혁명 ➔ 미국혁명 ➔ 프랑스혁명)
+  // 엄격한 역사적 시간 순서에 따른 데이터 (영국혁명 ➔ 미국혁명 ➔ 프랑스혁명)
   const chronologicalGameData = [
     // --- STAGE 1: 영국 혁명 (1628년~1689년 순서) ---
     {
@@ -546,13 +598,13 @@
     }
   ];
 
-  // 상태 변수
+  // 게임 상태 변수
   let currentGameQuestions = [];
   let currentQuestionIndex = 0;
   let score = 0;
   let totalTimeLeft = 180; // 전체 제한시간 3분(180초)
-  let stepTimeLeft = 5.0;  // 카드당 제한시간 5초
-  let currentStageNum = 0; // 현재 단계 추적 (1, 2, 3)
+  let stepTimeLeft = 5.0;  // 카운트다운 5초
+  let currentStageNum = 0; 
 
   let totalTimerInterval = null;
   let stepTimerInterval = null;
@@ -571,10 +623,10 @@
   const gameoverReason = document.getElementById('gameover-reason');
   const finalScoreDisplay = document.getElementById('final-score');
 
-  // 캐릭터 관련 DOM 및 상태
-  const workerChar = document.getElementById('worker-char');
+  // 캐릭터 DOM 및 상태
+  const libertyChar = document.getElementById('liberty-char');
+  const armFlag = document.getElementById('arm-flag');
   const armLeft = document.getElementById('arm-left');
-  const armRight = document.getElementById('arm-right');
   const mouth = document.getElementById('mouth');
   const stageTitleOverlay = document.getElementById('stage-title-overlay');
   const stageTitleSub = document.getElementById('stage-title-sub');
@@ -588,7 +640,7 @@
     totalTimeLeft = 180;
     isGameActive = true;
 
-    // 사건 순서 데이터 복사
+    // 역사 연대기 문제 데이터 복사
     currentGameQuestions = [...chronologicalGameData];
 
     scoreDisplay.textContent = score;
@@ -609,24 +661,24 @@
       }
     }, 1000);
 
-    // 첫 문제 로드
+    // 첫 문제 확인 및 로드
     checkAndLoadQuestion();
   }
 
-  // 캐릭터 기본 상태 초기화
+  // 자유의 여신 캐릭터 초기 상태 설정
   function resetCharacterState() {
-    workerChar.className = 'worker-character';
-    workerChar.style.left = '20px';
-    armLeft.setAttribute('d', 'M 33 58 Q 22 75 30 85');
-    armRight.setAttribute('d', 'M 67 58 Q 78 75 70 85');
-    mouth.setAttribute('d', 'M 52 44 Q 56 47 58 43');
+    libertyChar.className = 'liberty-character';
+    libertyChar.style.left = '15px';
+    armFlag.setAttribute('d', 'M 48 65 Q 55 40 58 22');
+    armLeft.setAttribute('d', 'M 44 67 Q 28 78 18 85');
+    mouth.setAttribute('d', 'M 48 53 Q 52 56 54 53');
   }
 
-  // 문제 및 단계 확인 후 로드
+  // 문제 및 단계 확인 후 진행
   function checkAndLoadQuestion() {
     if (!isGameActive) return;
 
-    // 모든 문제를 전부 맞춘 경우 (클리어!)
+    // 모든 문제를 전부 맞춘 경우 (혁명 완성!)
     if (currentQuestionIndex >= currentGameQuestions.length) {
       triggerVictory();
       return;
@@ -634,7 +686,7 @@
 
     const q = currentGameQuestions[currentQuestionIndex];
 
-    // 새로운 단계 시작 시 대단원 타이틀 연출
+    // 대단원 단계 변경 시 대단원 타이틀 연출
     if (q.stage !== currentStageNum) {
       currentStageNum = q.stage;
       showStageTitleOverlay(currentStageNum, () => {
@@ -645,7 +697,7 @@
     }
   }
 
-  // 대단원 타이틀 연출 (1.4초 표시 후 진행)
+  // 대단원 타이틀 팝업 연출 (1.4초)
   function showStageTitleOverlay(stageNum, callback) {
     clearInterval(stepTimerInterval);
     
@@ -665,7 +717,7 @@
     }, 1400);
   }
 
-  // 오답 선택지 랜더링용 오답 랜덤 추출
+  // 오답 보기 추출
   function getRandomDistractor(q) {
     if (q.distractors && q.distractors.length > 0) {
       const idx = Math.floor(Math.random() * q.distractors.length);
@@ -674,14 +726,14 @@
     return q.wrong || "권리장전 승인";
   }
 
-  // 실제 문제 데이터 로드
+  // 실제 문제 데이터 세팅
   function loadQuestionData(q) {
     stageBadge.textContent = q.stageName;
     questionText.textContent = `"${q.situation}"`;
 
     const wrongOptionText = getRandomDistractor(q);
 
-    // 보기 섞기
+    // 보기 랜덤 섞기
     const isCorrectFirst = Math.random() < 0.5;
     const option1Text = isCorrectFirst ? q.correct : wrongOptionText;
     const option2Text = isCorrectFirst ? wrongOptionText : q.correct;
@@ -691,23 +743,23 @@
       <button class="option-btn" onclick="handleAnswer(${!isCorrectFirst})">${option2Text}</button>
     `;
 
-    // 캐릭터 위치 업데이트 (진행도 비율에 맞게 위치 이동)
+    // 진행 비율에 따른 자유의 여신 위치 이동
     const progressPercent = (currentQuestionIndex / (currentGameQuestions.length - 1));
-    const containerWidth = document.querySelector('.character-stage').clientWidth - 90;
-    const newLeft = 20 + (progressPercent * Math.max(containerWidth, 200));
-    workerChar.style.left = `${newLeft}px`;
+    const containerWidth = document.querySelector('.character-stage').clientWidth - 100;
+    const newLeft = 15 + (progressPercent * Math.max(containerWidth, 220));
+    libertyChar.style.left = `${newLeft}px`;
 
     // 5초 타이머 재설정
     resetStepTimer();
   }
 
-  // 5초 문제 타이머
+  // 5초 타이머
   function resetStepTimer() {
     clearInterval(stepTimerInterval);
     stepTimeLeft = 5.0;
     stepTimerBar.style.width = '100%';
 
-    const updateInterval = 50; // 0.05초 간격 업데이트
+    const updateInterval = 50;
     stepTimerInterval = setInterval(() => {
       stepTimeLeft -= updateInterval / 1000;
       const percentage = Math.max(0, (stepTimeLeft / 5.0) * 100);
@@ -723,15 +775,14 @@
     }, updateInterval);
   }
 
-  // 답안 제출 핸들러
+  // 정답/오답 제출 핸들러
   function handleAnswer(isCorrect) {
     if (!isGameActive) return;
 
     clearInterval(stepTimerInterval);
 
     if (isCorrect) {
-      // 총 12문제 기준 만점 100점이 되도록 점수 산정
-      // 문제당 기본 7점 + 남은 시간(최대 5초) 비례 보너스 최대 1.33점 = 문제당 최대 8.33점 (12 * 8.33 ≈ 100점)
+      // 만점 100점 점수 시스템 (기본 7점 + 5초 속도 보너스 최대 1.33점)
       const baseScore = 7;
       const speedBonus = (stepTimeLeft / 5.0) * 1.333;
       const questionScore = Math.round(baseScore + speedBonus);
@@ -741,14 +792,14 @@
       
       scoreDisplay.textContent = score;
 
-      // 걸어가는 모션 부여
-      workerChar.classList.add('walk');
-      setTimeout(() => workerChar.classList.remove('walk'), 400);
+      // 정답 시 깃발을 흔들며 전진
+      libertyChar.classList.add('walk');
+      setTimeout(() => libertyChar.classList.remove('walk'), 400);
 
       currentQuestionIndex++;
       checkAndLoadQuestion();
     } else {
-      // 오답 피드백: 쓰러짐 효과 후 종료
+      // 오답 시 쓰러짐 연출 후 게임 종료
       triggerFall();
       setTimeout(() => {
         endGame("틀린 사건을 선택했습니다!");
@@ -756,33 +807,33 @@
     }
   }
 
-  // 쓰러지는 애니메이션 연출
+  // 쓰러지는 애니메이션
   function triggerFall() {
-    workerChar.classList.remove('walk');
-    workerChar.classList.add('fall');
-    mouth.setAttribute('d', 'M 52 47 Q 56 42 58 46'); // 슬픈 입모양
+    libertyChar.classList.remove('walk');
+    libertyChar.classList.add('fall');
+    mouth.setAttribute('d', 'M 48 56 Q 52 50 54 56'); // 슬픈 표정
   }
 
-  // 모든 혁명 완주 - 환호하는 로직
+  // 승리/완주 환호 연출
   function triggerVictory() {
     isGameActive = false;
     clearInterval(totalTimerInterval);
     clearInterval(stepTimerInterval);
 
-    // 모든 문제를 맞추었을 경우 최종 점수 100점으로 보정
+    // 만점 100점 보정
     score = 100;
     scoreDisplay.textContent = score;
 
-    // 환호 모습 적용
-    workerChar.className = 'worker-character cheer';
-    armLeft.setAttribute('d', 'M 33 58 L 20 30'); // 만세 자세
-    armRight.setAttribute('d', 'M 67 58 L 80 30');
-    mouth.setAttribute('d', 'M 50 42 Q 55 52 60 42 Z'); // 웃는 입
+    // 자유의 여신 환호 포즈
+    libertyChar.className = 'liberty-character cheer';
+    armFlag.setAttribute('d', 'M 48 65 Q 60 20 65 5'); // 깃발을 더 높이 듦
+    armLeft.setAttribute('d', 'M 44 67 Q 20 40 10 30'); // 왼쪽 손도 들어올림
+    mouth.setAttribute('d', 'M 46 52 Q 51 60 56 52 Z'); // 환호하는 입모양
 
     setTimeout(() => {
-      gameoverTitle.textContent = "혁명 완주 성공!";
-      gameoverTitle.style.color = "#2ed573";
-      gameoverReason.textContent = "축하합니다! 3대 혁명의 올바른 연대기를 완벽히 마스터하셨습니다 (100점 만점!)";
+      gameoverTitle.textContent = "자유와 혁명의 완주!";
+      gameoverTitle.style.color = "#ffd700";
+      gameoverReason.textContent = "축하합니다! 자유의 여신과 함께 3대 혁명의 연대기를 완벽하게 이끌었습니다 (100점 만점!)";
       gameOver(score);
     }, 1200);
   }
@@ -799,7 +850,7 @@
     gameOver(score);
   }
 
-  // 규격 준수: gameOver(점수) 함수 선언 및 UI 출력
+  // 규격 준수: gameOver(점수) 함수 호출 및 최종 결과 표시
   function gameOver(finalScore) {
     finalScoreDisplay.textContent = finalScore;
     gameoverOverlay.classList.remove('hidden');
