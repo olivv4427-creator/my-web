@@ -737,7 +737,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // ========================================================
         // [설정값] 파이어베이스 프로젝트 설정값
@@ -754,6 +754,7 @@
         let app, auth, db;
         let isFirebaseActive = false;
         let currentUser = null;
+        let unsubscribeCloudListener = null;
 
         // Firebase 초기화 검증 및 시도
         try {
@@ -873,24 +874,32 @@
             }
         }
 
-        async function loadUserDataCloud() {
+        function setupCloudListener() {
             if (!currentUser || !db) return;
-            try {
-                const docRef = doc(db, 'users', currentUser.uid, 'data', 'todos');
-                const docSnap = await getDoc(docRef);
+            if (unsubscribeCloudListener) {
+                unsubscribeCloudListener();
+            }
+
+            const docRef = doc(db, 'users', currentUser.uid, 'data', 'todos');
+            
+            // 실시간 리스너 수신 (노트북/핸드폰 간 데이터 실시간 동기화)
+            unsubscribeCloudListener = onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists() && docSnap.data().items) {
                     appData = { ...appData, ...docSnap.data().items };
+                    saveUserDataLocal();
+                    initDayData();
+                    initTimetable();
                 } else {
                     // 데이터가 없으면 기존 로컬 데이터 업로드
                     loadUserDataLocal();
-                    await saveUserDataCloud();
+                    saveUserDataCloud();
                 }
-            } catch (err) {
-                console.error("클라우드 불러오기 오류:", err);
+            }, (err) => {
+                console.error("클라우드 동기화 오류:", err);
                 loadUserDataLocal();
-            }
-            initDayData();
-            initTimetable();
+                initDayData();
+                initTimetable();
+            });
         }
 
         // 로그인 UI 제어
@@ -908,9 +917,13 @@
                     userAvatar.style.display = 'none';
                 }
                 logoutBtn.textContent = '로그아웃';
-                loadUserDataCloud();
+                setupCloudListener();
             } else {
                 currentUser = null;
+                if (unsubscribeCloudListener) {
+                    unsubscribeCloudListener();
+                    unsubscribeCloudListener = null;
+                }
                 userName.textContent = '연습 모드 (로컬 전용)';
                 userAvatar.style.display = 'none';
                 logoutBtn.textContent = '로그인 화면으로';
