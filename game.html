@@ -375,7 +375,7 @@
   <div class="character-stage">
     <div class="ground-line"></div>
     
-    <!-- SVG 근대 유럽 노동자 캐릭터 (빵모자, 조끼, 스카프) -->
+    <!-- SVG 근대 유럽 노동자 캐릭터 -->
     <div id="worker-char" class="worker-character">
       <svg id="worker-svg" viewBox="0 0 100 130" width="100%" height="100%">
         <!-- 몸통 & 조끼 -->
@@ -409,7 +409,7 @@
 
   <!-- 질문 영역 -->
   <div class="question-card">
-    <div class="question-desc">다음 일어날 사건을 5초 안에 선택하세요!</div>
+    <div class="question-desc">다음 역사적 사건을 5초 안에 순서대로 선택하세요!</div>
     <div id="question-text" class="question-text">게임 준비 중...</div>
   </div>
 
@@ -419,7 +419,7 @@
     <button class="option-btn">보기 2</button>
   </div>
 
-  <!-- 대단원 타이틀 오버레이 (각 단계 시작 시 팝업) -->
+  <!-- 대단원 타이틀 오버레이 -->
   <div id="stage-title-overlay" class="stage-title-overlay hidden">
     <div class="stage-title-card">
       <h2 id="stage-title-sub">STAGE 1</h2>
@@ -429,12 +429,12 @@
 
   <!-- 시작 화면 오버레이 -->
   <div id="start-overlay" class="overlay">
-    <h1>역사 3대 혁명<br>순발력 퀴즈</h1>
+    <h1>역사 3대 혁명<br>연대기 퀴즈</h1>
     <p>
-      영국 명예혁명 ➔ 미국 혁명 ➔ 프랑스 혁명<br><br>
-      제시된 상황 다음에 일어날 사건을<br>
-      <b>5초 안에</b> 정확히 선택하세요!<br>
-      노동자가 무사히 혁명의 길을 완주하도록 도와주세요.
+      <b>역사적 순서대로 사건이 진행됩니다!</b><br><br>
+      영국 혁명 ➔ 미국 혁명 ➔ 프랑스 혁명<br><br>
+      제시된 상황 다음에 일어날 직후 사건을<br>
+      <b>5초 안에</b> 정확히 선택하세요!
     </p>
     <button class="start-btn" onclick="startGame()">게임 시작</button>
   </div>
@@ -453,100 +453,101 @@
   // 지침 준수: 고유 게임 ID 선언
   const GAME_ID = 'my-game';
 
-  // 게임 데이터 (총 3단계 각 4문제)
-  const gameData = [
-    // 1단계: 영국 혁명 (인덱스 0~3)
+  // 역사적 시간 순서에 따른 데이터 (영국혁명 ➔ 미국혁명 ➔ 프랑스혁명)
+  const chronologicalGameData = [
+    // --- STAGE 1: 영국 혁명 (1628년~1689년 순서) ---
     {
       stage: 1,
       stageName: "1단계: 영국 혁명",
-      situation: "찰스 1세의 전제 정치와 의회 무시로 갈등이 폭발했다.",
-      correct: "영국 내전 발생 (왕당파 vs 의회파)",
-      wrong: "권리장전 승인"
+      situation: "1. 찰스 1세의 전제 정치와 과세에 반발하여 의회가 '권리청원'을 제출하였다.",
+      correct: "찰스 1세의 의회 해산 및 영국 내전(왕당파 vs 의회파) 발생",
+      distractors: ["미국 독립선언서 발표", "바스티유 감옥 습격", "권리장전 승인"]
     },
     {
       stage: 1,
       stageName: "1단계: 영국 혁명",
-      situation: "크롬웰의 의회파가 승리하고 찰스 1세가 처형되었다.",
-      correct: "공화정 수립",
-      wrong: "보스턴 차 사건"
+      situation: "2. 크롬웰이 이끄는 의회파가 승리하여 찰스 1세가 처형되었다.",
+      correct: "찰스 1세 처형 및 공화정 수립",
+      distractors: ["보스턴 차 사건", "테니스 코트의 서약", "나폴레옹 총통 수립"]
     },
     {
       stage: 1,
       stageName: "1단계: 영국 혁명",
-      situation: "제임스 2세가 전제 정치를 재개하려 하자 의회가 제임스 2세를 축출했다.",
-      correct: "윌리엄 3세와 메리 2세 추대 (명예혁명)",
-      wrong: "바스티유 감옥 습격"
+      situation: "3. 왕정복고 후 제임스 2세가 전제 정치를 재개하자 의회가 제임스 2세를 축출했다.",
+      correct: "윌리엄 3세와 메리 2세를 공동 왕으로 추대 (명예혁명)",
+      distractors: ["인권 선언 발표", "렉싱턴 전투 발생", "로베스피에르 공포정치"]
     },
     {
       stage: 1,
       stageName: "1단계: 영국 혁명",
-      situation: "피 한 방울 흘리지 않고 명예혁명이 성공하였다.",
-      correct: "권리장전 승인 및 의회 정치 확립",
-      wrong: "독립선언서 발표"
+      situation: "4. 피 한 방울 흘리지 않고 명예혁명이 성공적으로 완성되었다.",
+      correct: "권리장전 승인 (의회 정치 확립)",
+      distractors: ["구제도의 모순 심화", "대표 없는 곳에 과세 없다 주장", "삼부회 소집"]
     },
 
-    // 2단계: 미국 혁명 (인덱스 4~7)
+    // --- STAGE 2: 미국 혁명 (1765년~1776년 순서) ---
     {
       stage: 2,
       stageName: "2단계: 미국 혁명",
-      situation: "영국 본국이 식민지에 인쇄세, 차(Tea)세 등 과도한 세금을 부과했다.",
-      correct: "'대표 없는 곳에 과세 없다' 반발",
-      wrong: "테니스 코트의 서약"
+      situation: "5. 영국 본국이 식민지에 인쇄세와 차(Tea)세 등 과도한 세금을 부과했다.",
+      correct: "'대표 없는 곳에 과세 없다'며 식민지 주민 반발",
+      distractors: ["크롬웰의 호국경 독재", "바스티유 감옥 습격", "권리청원 제출"]
     },
     {
       stage: 2,
       stageName: "2단계: 미국 혁명",
-      situation: "식민지인들이 원주민으로 위장하여 영국 차 상자를 바다에 던졌다.",
-      correct: "보스턴 차 사건 발생",
-      wrong: "크롬웰의 독재"
+      situation: "6. 차(Tea) 독점법에 반발한 식민지인들이 영국 차 상자를 바다에 던졌다.",
+      correct: "보스턴 차 사건 발생 (1773)",
+      distractors: ["찰스 1세 처형", "테니스 코트의 서약", "루이 16세 처형"]
     },
     {
       stage: 2,
       stageName: "2단계: 미국 혁명",
-      situation: "렉싱턴 전투로 영국군과 식민지 민병대 간의 전쟁이 시작되었다.",
-      correct: "제2차 대륙회의 및 조지 워싱턴 총사령관 임명",
-      wrong: "나폴레옹의 총통 정부 수립"
+      situation: "7. 영국의 탄압에 맞서 렉싱턴 전투로 독립 전쟁의 총성이 울렸다.",
+      correct: "제2차 대륙회의 개최 및 조지 워싱턴 총사령관 임명",
+      distractors: ["명예혁명 완성", "입헌군주제 수립", "로베스피에르 몰락"]
     },
     {
       stage: 2,
       stageName: "2단계: 미국 혁명",
-      situation: "혁명 열기가 고조되자 토머스 제퍼슨 등이 문서 작성을 맡았다.",
+      situation: "8. 식민지 대표들이 필라델피아에 모여 혁명의 당위성을 세계에 알렸다.",
       correct: "미국 독립선언서 발표 (1776)",
-      wrong: "권리청원 제출"
+      distractors: ["권리장전 승인", "삼부회 결렬", "공화정 수립"]
     },
 
-    // 3단계: 프랑스 혁명 (인덱스 8~11)
+    // --- STAGE 3: 프랑스 혁명 (1789년~1793년 순서) ---
     {
       stage: 3,
       stageName: "3단계: 프랑스 혁명",
-      situation: "구제도의 모순과 재정 위기로 루이 16세가 삼부회를 소집했다.",
+      situation: "9. 구제도의 모순과 재정 위기로 루이 16세가 삼부회를 소집했다.",
       correct: "제3신분의 국민의회 결성 및 테니스 코트의 서약",
-      wrong: "영국 내전 개시"
+      distractors: ["보스턴 차 사건", "영국 내전 개시", "독립선언서 발표"]
     },
     {
       stage: 3,
       stageName: "3단계: 프랑스 혁명",
-      situation: "국왕이 군대를 집결시키자 분노한 파리 시민들이 행동에 나섰다.",
-      correct: "바스티유 감옥 습격",
-      wrong: "보스턴 차 사건"
+      situation: "10. 국왕이 삼부회를 탄압하자 분노한 파리 민중들이 행동에 나섰다.",
+      correct: "바스티유 감옥 습격 (1789)",
+      distractors: ["권리청원 제출", "렉싱턴 전투", "명예혁명 승인"]
     },
     {
       stage: 3,
       stageName: "3단계: 프랑스 혁명",
-      situation: "혁명이 전국으로 확산되며 봉건제 폐지가 선언되었다.",
+      situation: "11. 혁명이 전국으로 확산되며 봉건제 폐지가 선언되었다.",
       correct: "인권 선언(인간과 시민의 권리 선언) 발표",
-      wrong: "메이플라워 호 항해"
+      distractors: ["메이플라워 호 항해", "크롬웰 공화정", "영국 차 상자 투척"]
     },
     {
       stage: 3,
       stageName: "3단계: 프랑스 혁명",
-      situation: "혁명 정부가 공화정을 선포하고 국왕 루이 16세를 처형했다.",
+      situation: "12. 혁명 정부가 국민공회를 구성하고 국왕 루이 16세를 처형했다.",
       correct: "로베스피에르의 공포 정치 시작",
-      wrong: "명예혁명 완성"
+      wrong: "권리장전 제출"
     }
   ];
 
   // 상태 변수
+  let currentGameQuestions = [];
   let currentQuestionIndex = 0;
   let score = 0;
   let totalTimeLeft = 180; // 전체 제한시간 3분(180초)
@@ -587,6 +588,9 @@
     totalTimeLeft = 180;
     isGameActive = true;
 
+    // 사건 순서 데이터 복사
+    currentGameQuestions = [...chronologicalGameData];
+
     scoreDisplay.textContent = score;
     timeDisplay.textContent = totalTimeLeft;
 
@@ -623,12 +627,12 @@
     if (!isGameActive) return;
 
     // 모든 문제를 전부 맞춘 경우 (클리어!)
-    if (currentQuestionIndex >= gameData.length) {
+    if (currentQuestionIndex >= currentGameQuestions.length) {
       triggerVictory();
       return;
     }
 
-    const q = gameData[currentQuestionIndex];
+    const q = currentGameQuestions[currentQuestionIndex];
 
     // 새로운 단계 시작 시 대단원 타이틀 연출
     if (q.stage !== currentStageNum) {
@@ -641,14 +645,14 @@
     }
   }
 
-  // 대단원 타이틀 연출 (1.5초 표시 후 진행)
+  // 대단원 타이틀 연출 (1.4초 표시 후 진행)
   function showStageTitleOverlay(stageNum, callback) {
     clearInterval(stepTimerInterval);
     
     const titles = {
-      1: { sub: "STAGE 1", main: "영국 혁명" },
-      2: { sub: "STAGE 2", main: "미국 혁명" },
-      3: { sub: "STAGE 3", main: "프랑스 혁명" }
+      1: { sub: "STAGE 1", main: "영국 혁명 (1628~1689)" },
+      2: { sub: "STAGE 2", main: "미국 혁명 (1765~1776)" },
+      3: { sub: "STAGE 3", main: "프랑스 혁명 (1789~1793)" }
     };
 
     stageTitleSub.textContent = titles[stageNum].sub;
@@ -661,23 +665,34 @@
     }, 1400);
   }
 
+  // 오답 선택지 랜더링용 오답 랜덤 추출
+  function getRandomDistractor(q) {
+    if (q.distractors && q.distractors.length > 0) {
+      const idx = Math.floor(Math.random() * q.distractors.length);
+      return q.distractors[idx];
+    }
+    return q.wrong || "권리장전 승인";
+  }
+
   // 실제 문제 데이터 로드
   function loadQuestionData(q) {
     stageBadge.textContent = q.stageName;
     questionText.textContent = `"${q.situation}"`;
 
+    const wrongOptionText = getRandomDistractor(q);
+
     // 보기 섞기
     const isCorrectFirst = Math.random() < 0.5;
-    const option1Text = isCorrectFirst ? q.correct : q.wrong;
-    const option2Text = isCorrectFirst ? q.wrong : q.correct;
+    const option1Text = isCorrectFirst ? q.correct : wrongOptionText;
+    const option2Text = isCorrectFirst ? wrongOptionText : q.correct;
 
     optionsGrid.innerHTML = `
       <button class="option-btn" onclick="handleAnswer(${isCorrectFirst})">${option1Text}</button>
       <button class="option-btn" onclick="handleAnswer(${!isCorrectFirst})">${option2Text}</button>
     `;
 
-    // 캐릭터 위치 업데이트 (진행도 비율에 맞게 위치移動)
-    const progressPercent = (currentQuestionIndex / (gameData.length - 1));
+    // 캐릭터 위치 업데이트 (진행도 비율에 맞게 위치 이동)
+    const progressPercent = (currentQuestionIndex / (currentGameQuestions.length - 1));
     const containerWidth = document.querySelector('.character-stage').clientWidth - 90;
     const newLeft = 20 + (progressPercent * Math.max(containerWidth, 200));
     workerChar.style.left = `${newLeft}px`;
@@ -722,8 +737,7 @@
       const questionScore = Math.round(baseScore + speedBonus);
       
       score += questionScore;
-      // 만점(100점) 초과 방지
-      if (score > 100) score = 100;
+      if (score > 100) score = 100; // 만점 제한
       
       scoreDisplay.textContent = score;
 
@@ -768,7 +782,7 @@
     setTimeout(() => {
       gameoverTitle.textContent = "혁명 완주 성공!";
       gameoverTitle.style.color = "#2ed573";
-      gameoverReason.textContent = "축하합니다! 3대 혁명의 역사를 완벽히 마스터하셨습니다 (100점 만점!)";
+      gameoverReason.textContent = "축하합니다! 3대 혁명의 올바른 연대기를 완벽히 마스터하셨습니다 (100점 만점!)";
       gameOver(score);
     }, 1200);
   }
