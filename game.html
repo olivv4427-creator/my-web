@@ -627,6 +627,8 @@
   let totalTimeLeft = 180; // 전체 제한시간 3분(180초)
   let stepTimeLeft = 5.0;  // 카운트다운 5초
   let currentStageNum = 0; 
+  let startTime = 0;
+  let elapsedTime = 0;
 
   let totalTimerInterval = null;
   let stepTimerInterval = null;
@@ -663,6 +665,8 @@
     currentStageNum = 0;
     totalTimeLeft = 180;
     isGameActive = true;
+    startTime = Date.now();
+    elapsedTime = 0;
 
     // 역사 연대기 문제 데이터 복사
     currentGameQuestions = [...chronologicalGameData];
@@ -867,6 +871,7 @@
     isGameActive = false;
     clearInterval(totalTimerInterval);
     clearInterval(stepTimerInterval);
+    elapsedTime = Math.round((Date.now() - startTime) / 1000);
 
     gameoverTitle.textContent = "GAME OVER";
     gameoverTitle.style.color = "#ff4757";
@@ -878,8 +883,13 @@
   function gameOver(finalScore) {
     finalScoreDisplay.textContent = finalScore;
     
+    // 플레이 소요 시간 산출
+    if (!elapsedTime) {
+      elapsedTime = Math.round((Date.now() - startTime) / 1000);
+    }
+
     // 점수 저장 처리 (TOP 3 업데이트)
-    saveScore(finalScore);
+    saveScore(finalScore, elapsedTime);
 
     // 저장된 TOP 3 기록 불러와 화면에 갱신
     renderLeaderboard();
@@ -893,16 +903,15 @@
 
   const STORAGE_KEY = 'best_' + GAME_ID;
 
-  // 저장된 점수 목록 불러오기 (배열 형태: [{score: 100, date: '...'}, ...])
+  // 저장된 점수 목록 불러오기 (배열 형태: [{score: 100, time: 24, date: '...'}, ...])
   function loadBest() {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
       if (!data) return [];
       
       const parsed = JSON.parse(data);
-      // 단순 숫자로 저장되어 있던 이전 버전 호환 처리
       if (typeof parsed === 'number') {
-        return [{ score: parsed, date: '이전 기록' }];
+        return [{ score: parsed, time: 999, date: '이전 기록' }];
       }
       return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
@@ -911,19 +920,26 @@
     }
   }
 
-  // 점수 저장하기 (상위 3등 유지)
-  function saveScore(newScore) {
+  // 점수 저장하기 (상위 3등 유지, 점수 높음 우선, 점수 같을 시 빠른 풀이시간 우선)
+  function saveScore(newScore, timeTaken) {
     let scores = loadBest();
 
-    // 현재 날짜 간단 포맷 (MM/DD HH:mm)
     const now = new Date();
     const dateStr = `${now.getMonth() + 1}/${now.getDate()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-    // 새로운 점수 추가
-    scores.push({ score: newScore, date: dateStr });
+    scores.push({
+      score: newScore,
+      time: timeTaken || 999,
+      date: dateStr
+    });
 
-    // 내림차순 정렬 (높은 점수 우선)
-    scores.sort((a, b) => b.score - a.score);
+    // 정렬 규칙: 1순위 - 높은 점수, 2순위 - 적은 소요 시간
+    scores.sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      return a.time - b.time;
+    });
 
     // 상위 3개만 유지
     scores = scores.slice(0, 3);
@@ -934,7 +950,7 @@
       console.error("점수 저장 실패:", e);
     }
 
-    // 상단 최고의 점수 표시 업데이트
+    // 상단 최고 점수 텍스트 업데이트
     updateBestDisplay();
   }
 
@@ -961,8 +977,10 @@
     scores.forEach((item, index) => {
       const row = document.createElement('div');
       row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 2px 4px;';
+      
+      const timeText = item.time && item.time < 999 ? ` (${item.time}초)` : '';
       row.innerHTML = `
-        <span>${medals[index] || (index + 1) + '.'} ${item.score}점</span>
+        <span>${medals[index] || (index + 1) + '.'} <b>${item.score}점</b>${timeText}</span>
         <span style="font-size: 11px; color: #888;">${item.date}</span>
       `;
       leaderboardList.appendChild(row);
