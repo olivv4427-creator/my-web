@@ -34,6 +34,81 @@
             padding: 24px 16px;
         }
 
+        /* 로그인 안내 스크린 */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 420px;
+            width: 100%;
+            margin-top: 60px;
+            padding: 32px 24px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .login-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+
+        .google-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px 16px;
+            background-color: #ffffff;
+            border: 1px solid var(--border-dark);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .google-login-btn:hover {
+            background-color: var(--light-gray);
+        }
+
+        .demo-mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 14px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .login-error-msg {
+            margin-top: 16px;
+            font-size: 0.8rem;
+            color: #e03131;
+            word-break: break-all;
+            background: #fff5f5;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ffc9c9;
+            display: none;
+            width: 100%;
+        }
+
+        /* 플래너 메인 앱 영역 */
         .app-container {
             width: 100%;
             max-width: 1050px;
@@ -46,6 +121,58 @@
             .app-container {
                 grid-template-columns: 1fr;
             }
+        }
+
+        /* 유저 프로필 헤더 바 */
+        .user-bar {
+            grid-column: 1 / -1;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .sync-status {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid var(--border-dark);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background-color: var(--light-gray);
         }
 
         .column {
@@ -273,7 +400,6 @@
             transition: color 0.2s;
         }
 
-        /* 완료 상태 및 특수 표시 (체크 대신 줄 + 오른쪽 끝 O) */
         .todo-card.completed .todo-text {
             text-decoration: line-through;
             color: var(--text-muted);
@@ -307,7 +433,6 @@
             color: #e03131;
         }
 
-        /* 비어있을 때 문구 */
         .empty-state {
             text-align: center;
             padding: 30px 20px;
@@ -318,7 +443,6 @@
             border-radius: var(--radius);
         }
 
-        /* 모두 완료 시 '끝' 배지 */
         .all-completed-badge {
             text-align: center;
             background-color: var(--accent-gray);
@@ -351,7 +475,7 @@
             background-color: var(--light-gray);
         }
 
-        /* 주간 시간표 스타일 (월~금) */
+        /* 주간 시간표 스타일 */
         .timetable-title {
             font-size: 0.95rem;
             font-weight: 700;
@@ -422,14 +546,13 @@
             outline: 2px solid var(--accent-gray);
         }
 
-        /* 직접 수정한 셀 스타일 (진한 회색 + 흰 글씨) */
         .timetable td.custom-edited {
             background-color: var(--accent-gray) !important;
             color: #ffffff !important;
             font-weight: 700;
         }
 
-        /* 오른쪽 영역 아래: 순공시간 타이머 */
+        /* 타이머 카드의 스타일 */
         .timer-card {
             display: flex;
             flex-direction: column;
@@ -489,12 +612,34 @@
 </head>
 <body>
 
-    <div class="app-container">
+    <!-- 1. 로그인 전 안내 화면 -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-title">오늘 할 일 & 공부 플래너</div>
+        <div class="login-desc">구글 계정으로 로그인하여 나의 할 일 목록과 시간표를 클라우드에 안전하게 보관하세요.</div>
+        <button class="google-login-btn" id="googleLoginBtn">
+            <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+            구글 계정으로 로그인
+        </button>
+        <button class="demo-mode-btn" id="demoModeBtn">로그인 없이 로컬 저장 모드로 시작</button>
+        <div class="login-error-msg" id="loginErrorMsg"></div>
+    </div>
+
+    <!-- 2. 로그인 후 메인 플래너 화면 -->
+    <div class="app-container" id="appContainer" style="display: none;">
         
+        <!-- 프로필 및 동기화 상태 바 -->
+        <div class="user-bar">
+            <div class="user-info">
+                <img src="" alt="Profile" class="user-avatar" id="userAvatar" style="display: none;">
+                <span class="user-name" id="userName">로컬 연습 모드</span>
+                <span class="sync-status" id="syncStatus"></span>
+            </div>
+            <button class="logout-btn" id="logoutBtn">로그아웃</button>
+        </div>
+
         <!-- 왼쪽 영역: D-Day, 날짜 이동, 할 일 목록 -->
         <div class="column">
             
-            <!-- D-Day 및 시험일 설정 -->
             <div class="card header-card">
                 <div class="dday-container">
                     <div style="display: flex; align-items: center; gap: 8px;">
@@ -507,7 +652,6 @@
                     </div>
                 </div>
 
-                <!-- 날짜 내비게이션 (화살표로 날짜 이동) -->
                 <div class="date-nav-container">
                     <button class="date-nav-btn" id="prevDayBtn" title="전날">&lt;</button>
                     <div class="date-display-wrap">
@@ -518,7 +662,6 @@
                 </div>
             </div>
 
-            <!-- 진행률 -->
             <div class="card">
                 <div class="progress-header">
                     <span>오늘 달성도</span>
@@ -529,36 +672,30 @@
                 </div>
             </div>
 
-            <!-- 할 일 입력 폼 -->
             <form class="input-form" id="todoForm">
                 <input type="text" class="todo-input" id="todoInput" placeholder="할 일을 입력하세요..." autocomplete="off">
                 <button type="submit" class="add-btn">추가</button>
             </form>
 
-            <!-- 모두 완료 시 '끝' 문구 -->
             <div class="all-completed-badge" id="allCompletedBadge" style="display: none;">
                 🎉 끝
             </div>
 
-            <!-- 할 일 세로 목록 -->
             <div class="todo-list-container" id="todoListContainer"></div>
 
-            <!-- 목록이 비어 있을 때 -->
             <div class="empty-state" id="emptyState" style="display: block;">
                 공부 안 할 거니
             </div>
 
-            <!-- 완료 항목 정리 -->
             <div class="action-area">
                 <button type="button" class="clear-btn" id="clearCompletedBtn">완료한 것 치우기</button>
             </div>
 
         </div>
 
-        <!-- 오른쪽 영역: 월~금 시간표 & 순공 타이머 -->
+        <!-- 오른쪽 영역: 주간 시간표 & 순공 타이머 -->
         <div class="column">
             
-            <!-- 주간 시간표 (월~금, 7교시) -->
             <div class="card">
                 <div class="timetable-title">
                     <div>
@@ -584,7 +721,6 @@
                 </div>
             </div>
 
-            <!-- 순공시간 타이머 -->
             <div class="card timer-card">
                 <div class="timetable-title" style="width:100%; margin-bottom: 0;">
                     <span>오늘의 순공시간</span>
@@ -599,15 +735,59 @@
 
         </div>
 
-        <!-- 하단 안내 Footer -->
         <footer>
-            이 목록 및 시간표 정보는 브라우저(localStorage)에 안전하게 저장됩니다.
+            내 할 일은 내 계정에만 저장되고 다른 사람은 볼 수 없습니다
         </footer>
 
     </div>
 
-    <script>
-        // DOM 요소 가져오기
+    <!-- Firebase 모듈 라이브러리 및 앱 로직 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // ========================================================
+        // [설정값] 파이어베이스 프로젝트 설정값을 아래 객체에 적용하세요.
+        // ========================================================
+        const firebaseConfig = {
+            apiKey: "",
+            authDomain: "",
+            projectId: "",
+            storageBucket: "",
+            messagingSenderId: "",
+            appId: ""
+        };
+
+        let app, auth, db;
+        let isFirebaseActive = false;
+        let currentUser = null;
+
+        // Firebase 초기화 검증 및 시도
+        try {
+            if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                isFirebaseActive = true;
+            }
+        } catch (e) {
+            console.warn("Firebase 초기화 안 됨. 연습 모드로 동작합니다.", e);
+            isFirebaseActive = false;
+        }
+
+        // DOM 요소
+        const loginScreen = document.getElementById('loginScreen');
+        const appContainer = document.getElementById('appContainer');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const demoModeBtn = document.getElementById('demoModeBtn');
+        const loginErrorMsg = document.getElementById('loginErrorMsg');
+        
+        const userName = document.getElementById('userName');
+        const userAvatar = document.getElementById('userAvatar');
+        const syncStatus = document.getElementById('syncStatus');
+        const logoutBtn = document.getElementById('logoutBtn');
+
         const ddayBadge = document.getElementById('ddayBadge');
         const examTodayTag = document.getElementById('examTodayTag');
         const ddayInput = document.getElementById('ddayInput');
@@ -631,7 +811,7 @@
         const pauseTimerBtn = document.getElementById('pauseTimerBtn');
         const resetTimerBtn = document.getElementById('resetTimerBtn');
 
-        // 초기 기본 시간표 데이터 (월~금, 7교시)
+        // 초기 기본 시간표
         const INITIAL_DEFAULT_TIMETABLE = [
             ["과학", "수학", "역사", "수학", "음악"],
             ["국어", "스포츠", "정보", "기술", "과학"],
@@ -642,7 +822,6 @@
             ["", "", "", "", "역사"]
         ];
 
-        // 날짜 포맷 헬퍼 (YYYY-MM-DD)
         function formatDateKey(dateObj) {
             const y = dateObj.getFullYear();
             const m = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -650,19 +829,172 @@
             return `${y}-${m}-${d}`;
         }
 
-        // 상태 데이터
+        // 상태 변수
         let currentDateObj = new Date();
-        let ddayDate = localStorage.getItem('planner_dday') || '2026-10-24';
-        let baseTimetable = JSON.parse(localStorage.getItem('planner_base_timetable')) || INITIAL_DEFAULT_TIMETABLE;
-        let timetableData = JSON.parse(localStorage.getItem('planner_timetable')) || baseTimetable;
-        
+        let appData = {
+            todos: {}, // { 'YYYY-MM-DD': [{id, text, completed}] }
+            studySeconds: {}, // { 'YYYY-MM-DD': number }
+            ddayDate: '2026-10-24',
+            baseTimetable: INITIAL_DEFAULT_TIMETABLE,
+            timetableData: INITIAL_DEFAULT_TIMETABLE
+        };
+
         let timerInterval = null;
         let activeTimerDateKey = null;
+        let saveDebounceTimer = null;
 
-        // 시험일 설정 초기화
-        ddayInput.value = ddayDate;
+        // Firebase 연동 저장 / 디바운스
+        function showSyncStatus(text) {
+            if (syncStatus) syncStatus.textContent = text ? `(${text})` : '';
+        }
 
-        // 1. 한국어 날짜 및 D-Day 업데이트
+        async function saveUserDataCloud() {
+            if (!currentUser || !db) return;
+            showSyncStatus('저장 중…');
+            try {
+                // RULE 1: STRICT PATH users/{userId}/data/todos
+                const docRef = doc(db, 'users', currentUser.uid, 'data', 'todos');
+                await setDoc(docRef, { items: appData });
+                showSyncStatus('저장됨');
+            } catch (err) {
+                console.error("클라우드 저장 실패:", err);
+                showSyncStatus('저장 오류 (로컬에만 저장)');
+                saveUserDataLocal();
+            }
+        }
+
+        function triggerSaveData() {
+            // 항시 로컬 저장
+            saveUserDataLocal();
+
+            // Firebase 로그인 상태면 클라우드에 0.6초 디바운스 적용 저장
+            if (currentUser && isFirebaseActive) {
+                showSyncStatus('저장 대기 중');
+                if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
+                saveDebounceTimer = setTimeout(() => {
+                    saveUserDataCloud();
+                }, 600);
+            }
+        }
+
+        function saveUserDataLocal() {
+            localStorage.setItem('planner_app_data_v2', JSON.stringify(appData));
+        }
+
+        function loadUserDataLocal() {
+            const saved = localStorage.getItem('planner_app_data_v2');
+            if (saved) {
+                try {
+                    appData = { ...appData, ...JSON.parse(saved) };
+                } catch (e) {
+                    console.error("로컬 데이터 로드 실패", e);
+                }
+            }
+        }
+
+        async function loadUserDataCloud() {
+            if (!currentUser || !db) return;
+            showSyncStatus('불러오는 중…');
+            try {
+                const docRef = doc(db, 'users', currentUser.uid, 'data', 'todos');
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().items) {
+                    appData = { ...appData, ...docSnap.data().items };
+                    showSyncStatus('동기화 완료');
+                } else {
+                    // 데이터가 없으면 기존 로컬 데이터 업로드
+                    loadUserDataLocal();
+                    await saveUserDataCloud();
+                }
+            } catch (err) {
+                console.error("클라우드 불러오기 오류:", err);
+                showSyncStatus('로컬 데이터 불러옴');
+                loadUserDataLocal();
+            }
+            initDayData();
+            initTimetable();
+        }
+
+        // 로그인 UI 제어
+        function showMainPlannerUI(user) {
+            loginScreen.style.display = 'none';
+            appContainer.style.display = 'grid';
+
+            if (user) {
+                userName.textContent = user.displayName || user.email || '사용자';
+                if (user.photoURL) {
+                    userAvatar.src = user.photoURL;
+                    userAvatar.style.display = 'inline-block';
+                } else {
+                    userAvatar.style.display = 'none';
+                }
+                logoutBtn.textContent = '로그아웃';
+                loadUserDataCloud();
+            } else {
+                userName.textContent = '연습 모드 (로컬 전용)';
+                userAvatar.style.display = 'none';
+                logoutBtn.textContent = '로그인 화면으로';
+                showSyncStatus('브라우저 저장 중');
+                loadUserDataLocal();
+                initDayData();
+                initTimetable();
+            }
+        }
+
+        function showLoginScreenUI() {
+            loginScreen.style.display = 'flex';
+            appContainer.style.display = 'none';
+            loginErrorMsg.style.display = 'none';
+            loginErrorMsg.textContent = '';
+        }
+
+        // 이벤트 - 로그인/로그아웃
+        googleLoginBtn.addEventListener('click', async () => {
+            if (!isFirebaseActive) {
+                loginErrorMsg.textContent = 'Firebase 설정값이 입력되지 않았습니다. 연습 모드를 이용해 주세요.';
+                loginErrorMsg.style.display = 'block';
+                return;
+            }
+            const provider = new GoogleAuthProvider();
+            try {
+                loginErrorMsg.style.display = 'none';
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("구글 로그인 실패:", error);
+                loginErrorMsg.textContent = `로그인 오류 [${error.code}]: ${error.message}`;
+                loginErrorMsg.style.display = 'block';
+            }
+        });
+
+        demoModeBtn.addEventListener('click', () => {
+            currentUser = null;
+            showMainPlannerUI(null);
+        });
+
+        logoutBtn.addEventListener('click', async () => {
+            if (currentUser && auth) {
+                await signOut(auth);
+            }
+            currentUser = null;
+            showLoginScreenUI();
+        });
+
+        // Firebase 인증 상태 리스너
+        if (isFirebaseActive && auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    showMainPlannerUI(user);
+                } else {
+                    currentUser = null;
+                }
+            });
+        } else {
+            // Firebase 비활성화 시 연습모드로 시작 안내 가능
+        }
+
+        // --- 플래너 로직 ---
+
         function updateDateHeader() {
             const year = currentDateObj.getFullYear();
             const month = currentDateObj.getMonth() + 1;
@@ -676,16 +1008,13 @@
 
         function updateDDay() {
             examTodayTag.style.display = 'none';
-
-            if (!ddayDate) {
-                ddayBadge.textContent = 'D-Day 미설정';
-                return;
-            }
+            const targetDateStr = appData.ddayDate || '2026-10-24';
+            ddayInput.value = targetDateStr;
 
             const viewingDate = new Date(currentDateObj.getFullYear(), currentDateObj.getMonth(), currentDateObj.getDate());
             viewingDate.setHours(0, 0, 0, 0);
 
-            const target = new Date(ddayDate);
+            const target = new Date(targetDateStr);
             target.setHours(0, 0, 0, 0);
 
             const diffTime = target - viewingDate;
@@ -702,12 +1031,11 @@
         }
 
         ddayInput.addEventListener('change', (e) => {
-            ddayDate = e.target.value;
-            localStorage.setItem('planner_dday', ddayDate);
+            appData.ddayDate = e.target.value;
+            triggerSaveData();
             updateDDay();
         });
 
-        // 날짜 이동 이벤트
         prevDayBtn.addEventListener('click', () => {
             currentDateObj.setDate(currentDateObj.getDate() - 1);
             initDayData();
@@ -723,32 +1051,27 @@
             initDayData();
         });
 
-        // 2. 날짜별 데이터 관리 (할 일, 타이머)
         function getCurrentDateKey() {
             return formatDateKey(currentDateObj);
         }
 
         function getTodosForCurrentDate() {
-            const key = `planner_todos_${getCurrentDateKey()}`;
-            return JSON.parse(localStorage.getItem(key)) || [];
-        }
-
-        function saveTodosForCurrentDate(todos) {
-            const key = `planner_todos_${getCurrentDateKey()}`;
-            localStorage.setItem(key, JSON.stringify(todos));
+            const key = getCurrentDateKey();
+            if (!appData.todos[key]) appData.todos[key] = [];
+            return appData.todos[key];
         }
 
         function getStudySecondsForCurrentDate() {
-            const key = `planner_study_seconds_${getCurrentDateKey()}`;
-            return parseInt(localStorage.getItem(key) || '0', 10);
+            const key = getCurrentDateKey();
+            return appData.studySeconds[key] || 0;
         }
 
-        function saveStudySecondsForCurrentDate(secs) {
-            const key = `planner_study_seconds_${getCurrentDateKey()}`;
-            localStorage.setItem(key, secs.toString());
+        function setStudySecondsForCurrentDate(secs) {
+            const key = getCurrentDateKey();
+            appData.studySeconds[key] = secs;
+            triggerSaveData();
         }
 
-        // 3. 할 일 UI 렌더링
         function renderTodos() {
             const todos = getTodosForCurrentDate();
             todoListContainer.innerHTML = '';
@@ -825,34 +1148,40 @@
                 completed: false
             });
 
-            saveTodosForCurrentDate(todos);
+            triggerSaveData();
             renderTodos();
         }
 
         function toggleTodo(id) {
-            let todos = getTodosForCurrentDate();
-            todos = todos.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
-            saveTodosForCurrentDate(todos);
-            renderTodos();
+            const todos = getTodosForCurrentDate();
+            const target = todos.find(t => t.id === id);
+            if (target) {
+                target.completed = !target.completed;
+                triggerSaveData();
+                renderTodos();
+            }
         }
 
         function deleteTodo(id) {
-            let todos = getTodosForCurrentDate();
-            todos = todos.filter(t => t.id !== id);
-            saveTodosForCurrentDate(todos);
+            const key = getCurrentDateKey();
+            appData.todos[key] = appData.todos[key].filter(t => t.id !== id);
+            triggerSaveData();
             renderTodos();
         }
 
         function clearCompleted() {
-            let todos = getTodosForCurrentDate();
-            todos = todos.filter(t => !t.completed);
-            saveTodosForCurrentDate(todos);
-            renderTodos();
+            const key = getCurrentDateKey();
+            if (appData.todos[key]) {
+                appData.todos[key] = appData.todos[key].filter(t => !t.completed);
+                triggerSaveData();
+                renderTodos();
+            }
         }
 
-        // 4. 주간 시간표 렌더링 (월~금, 7교시)
         function initTimetable() {
             timetableBody.innerHTML = '';
+            const tData = appData.timetableData || INITIAL_DEFAULT_TIMETABLE;
+            const bData = appData.baseTimetable || INITIAL_DEFAULT_TIMETABLE;
 
             for (let i = 0; i < 7; i++) {
                 const tr = document.createElement('tr');
@@ -865,8 +1194,8 @@
                     const td = document.createElement('td');
                     td.contentEditable = "true";
                     
-                    const cellVal = (timetableData[i] && timetableData[i][j] !== undefined) ? timetableData[i][j] : '';
-                    const defaultVal = (baseTimetable[i] && baseTimetable[i][j] !== undefined) ? baseTimetable[i][j] : '';
+                    const cellVal = (tData[i] && tData[i][j] !== undefined) ? tData[i][j] : '';
+                    const defaultVal = (bData[i] && bData[i][j] !== undefined) ? bData[i][j] : '';
 
                     td.textContent = cellVal;
 
@@ -876,14 +1205,14 @@
 
                     td.addEventListener('input', () => {
                         const currentVal = td.textContent.trim();
-                        const currentDefaultVal = (baseTimetable[i] && baseTimetable[i][j] !== undefined) ? baseTimetable[i][j] : '';
+                        const currentDefaultVal = (appData.baseTimetable[i] && appData.baseTimetable[i][j] !== undefined) ? appData.baseTimetable[i][j] : '';
                         
                         if (currentVal !== currentDefaultVal) {
                             td.classList.add('custom-edited');
                         } else {
                             td.classList.remove('custom-edited');
                         }
-                        saveTimetable();
+                        saveTimetableFromDOM();
                     });
 
                     tr.appendChild(td);
@@ -893,7 +1222,7 @@
             }
         }
 
-        function saveTimetable() {
+        function saveTimetableFromDOM() {
             const rows = timetableBody.querySelectorAll('tr');
             const newData = [];
 
@@ -906,18 +1235,17 @@
                 newData.push(rowData);
             });
 
-            timetableData = newData;
-            localStorage.setItem('planner_timetable', JSON.stringify(timetableData));
+            appData.timetableData = newData;
+            triggerSaveData();
         }
 
         function setAsDefaultTimetable() {
-            saveTimetable();
-            baseTimetable = JSON.parse(JSON.stringify(timetableData));
-            localStorage.setItem('planner_base_timetable', JSON.stringify(baseTimetable));
+            saveTimetableFromDOM();
+            appData.baseTimetable = JSON.parse(JSON.stringify(appData.timetableData));
+            triggerSaveData();
             initTimetable();
         }
 
-        // 5. 순공시간 타이머 로직
         function formatTime(totalSeconds) {
             const hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
             const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
@@ -943,7 +1271,7 @@
 
                 let secs = getStudySecondsForCurrentDate();
                 secs++;
-                saveStudySecondsForCurrentDate(secs);
+                setStudySecondsForCurrentDate(secs);
                 updateTimerDisplay();
             }, 1000);
         }
@@ -955,18 +1283,16 @@
 
         function resetTimer() {
             pauseTimer();
-            saveStudySecondsForCurrentDate(0);
+            setStudySecondsForCurrentDate(0);
             updateTimerDisplay();
         }
 
-        // 날짜 전환 시 데이터 동기화
         function initDayData() {
             updateDateHeader();
             renderTodos();
             updateTimerDisplay();
         }
 
-        // 이벤트 연결
         todoForm.addEventListener('submit', (e) => {
             e.preventDefault();
             addTodo(todoInput.value);
@@ -980,12 +1306,12 @@
         pauseTimerBtn.addEventListener('click', pauseTimer);
         resetTimerBtn.addEventListener('click', resetTimer);
 
-        // 앱 최초 구동
+        // 앱 초기화 구동
         window.addEventListener('DOMContentLoaded', () => {
+            loadUserDataLocal();
             initDayData();
             initTimetable();
         });
     </script>
-
 </body>
 </html>
