@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko"><head>
+<html lang="ko">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오늘 할 일 &amp; 공부 플래너</title>
+    <title>오늘 할 일 & 공부 플래너</title>
     <style>
         :root {
             --bg-color: #f8f9fa;
@@ -102,10 +103,64 @@
             color: var(--text-main);
         }
 
+        /* 날짜 내비게이션 영역 */
+        .date-nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--light-gray);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .date-nav-btn {
+            background: #fff;
+            border: 1px solid var(--border-dark);
+            color: var(--text-main);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .date-nav-btn:hover {
+            background-color: var(--accent-gray);
+            color: #fff;
+            border-color: var(--accent-gray);
+        }
+
+        .date-display-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .date-display {
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .today-jump-btn {
+            background: transparent;
+            border: 1px solid var(--border-dark);
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
             color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .today-jump-btn:hover {
+            color: var(--text-main);
+            background: #fff;
         }
 
         /* 진행률 영역 */
@@ -436,10 +491,10 @@
 
     <div class="app-container">
         
-        <!-- 왼쪽 영역: D-Day, 할 일 목록 -->
+        <!-- 왼쪽 영역: D-Day, 날짜 이동, 할 일 목록 -->
         <div class="column">
             
-            <!-- D-Day 및 날짜 카운터 -->
+            <!-- D-Day 및 시험일 설정 -->
             <div class="card header-card">
                 <div class="dday-container">
                     <div style="display: flex; align-items: center; gap: 8px;">
@@ -451,7 +506,16 @@
                         <input type="date" id="ddayInput">
                     </div>
                 </div>
-                <div class="date-display" id="dateDisplay">2026년 10월 24일 토요일</div>
+
+                <!-- 날짜 내비게이션 (화살표로 날짜 이동) -->
+                <div class="date-nav-container">
+                    <button class="date-nav-btn" id="prevDayBtn" title="전날">&lt;</button>
+                    <div class="date-display-wrap">
+                        <div class="date-display" id="dateDisplay">2026년 10월 24일 토요일</div>
+                        <button class="today-jump-btn" id="todayJumpBtn">오늘</button>
+                    </div>
+                    <button class="date-nav-btn" id="nextDayBtn" title="다음날">&gt;</button>
+                </div>
             </div>
 
             <!-- 진행률 -->
@@ -504,12 +568,7 @@
                     <button type="button" class="default-set-btn" id="setDefaultTimetableBtn">기본 시간표로 설정</button>
                 </div>
                 <div class="timetable-wrapper">
-                    <span class="timetable-subtitle">수정 시 진한 회색으로 표시됨</span><div class="timetable-wrapper">
-                    </div><table class="timetable">
-
-                    
-                
-                </table><table class="timetable">
+                    <table class="timetable">
                         <thead>
                             <tr>
                                 <th style="width: 16%;">교시</th>
@@ -520,7 +579,7 @@
                                 <th>금</th>
                             </tr>
                         </thead>
-                        <tbody id="timetableBody"><tr><th>1교시</th><td contenteditable="true">과학</td><td contenteditable="true">수학</td><td contenteditable="true">역사</td><td contenteditable="true">수학</td><td contenteditable="true">음악</td></tr><tr><th>2교시</th><td contenteditable="true">국어</td><td contenteditable="true">스포츠</td><td contenteditable="true">정보</td><td contenteditable="true">기술</td><td contenteditable="true">과학</td></tr><tr><th>3교시</th><td contenteditable="true">역사</td><td contenteditable="true">국어</td><td contenteditable="true" class="">체육</td><td contenteditable="true">국어</td><td contenteditable="true">영어</td></tr><tr><th>4교시</th><td contenteditable="true">스포츠</td><td contenteditable="true">과학</td><td contenteditable="true">미술</td><td contenteditable="true">가정</td><td contenteditable="true">수학</td></tr><tr><th>5교시</th><td contenteditable="true">진로</td><td contenteditable="true">정보</td><td contenteditable="true">국어</td><td contenteditable="true">과학</td><td contenteditable="true">일본어</td></tr><tr><th>6교시</th><td contenteditable="true">영어</td><td contenteditable="true">스포츠</td><td contenteditable="true">수학</td><td contenteditable="true">영어</td><td contenteditable="true">체육</td></tr><tr><th>7교시</th><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true">역사</td></tr></tbody>
+                        <tbody id="timetableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -553,6 +612,10 @@
         const examTodayTag = document.getElementById('examTodayTag');
         const ddayInput = document.getElementById('ddayInput');
         const dateDisplay = document.getElementById('dateDisplay');
+        const prevDayBtn = document.getElementById('prevDayBtn');
+        const nextDayBtn = document.getElementById('nextDayBtn');
+        const todayJumpBtn = document.getElementById('todayJumpBtn');
+
         const progressCount = document.getElementById('progressCount');
         const progressBarFill = document.getElementById('progressBarFill');
         const todoForm = document.getElementById('todoForm');
@@ -570,36 +633,47 @@
 
         // 초기 기본 시간표 데이터 (월~금, 7교시)
         const INITIAL_DEFAULT_TIMETABLE = [
-            ["자습", "자습", "역사", "", ""],
-            ["과학", "국어", "정보", "", ""],
-            ["역사", "자습", "", "", ""],
-            ["영어", "수학", "", "", ""],
-            ["", "", "", "", ""],
-            ["", "", "", "", ""],
-            ["", "", "", "", ""]
+            ["과학", "수학", "역사", "수학", "음악"],
+            ["국어", "스포츠", "정보", "기술", "과학"],
+            ["역사", "국어", "체육", "국어", "영어"],
+            ["스포츠", "과학", "미술", "가정", "수학"],
+            ["진로", "정보", "국어", "과학", "일본어"],
+            ["영어", "스포츠", "수학", "영어", "체육"],
+            ["", "", "", "", "역사"]
         ];
 
-        // 상태 데이터
-        let todos = JSON.parse(localStorage.getItem('planner_todos')) || [];
-        let ddayDate = localStorage.getItem('planner_dday') || '';
-        let baseTimetable = JSON.parse(localStorage.getItem('planner_base_timetable')) || INITIAL_DEFAULT_TIMETABLE;
-        let timetableData = JSON.parse(localStorage.getItem('planner_timetable')) || baseTimetable;
-        let studySeconds = parseInt(localStorage.getItem('planner_study_seconds') || '0', 10);
-        let timerInterval = null;
-
-        // 1. 한국어 날짜 초기화
-        function initDate() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth() + 1;
-            const date = now.getDate();
-            const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-            const dayName = days[now.getDay()];
-
-            dateDisplay.textContent = `${year}년 ${month}월 ${date}일 ${dayName}`;
+        // 날짜 포맷 헬퍼 (YYYY-MM-DD)
+        function formatDateKey(dateObj) {
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
         }
 
-        // 2. D-Day 계산 및 업데이트
+        // 상태 데이터
+        let currentDateObj = new Date();
+        let ddayDate = localStorage.getItem('planner_dday') || '2026-10-24';
+        let baseTimetable = JSON.parse(localStorage.getItem('planner_base_timetable')) || INITIAL_DEFAULT_TIMETABLE;
+        let timetableData = JSON.parse(localStorage.getItem('planner_timetable')) || baseTimetable;
+        
+        let timerInterval = null;
+        let activeTimerDateKey = null;
+
+        // 시험일 설정 초기화
+        ddayInput.value = ddayDate;
+
+        // 1. 한국어 날짜 및 D-Day 업데이트
+        function updateDateHeader() {
+            const year = currentDateObj.getFullYear();
+            const month = currentDateObj.getMonth() + 1;
+            const date = currentDateObj.getDate();
+            const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+            const dayName = days[currentDateObj.getDay()];
+
+            dateDisplay.textContent = `${year}년 ${month}월 ${date}일 ${dayName}`;
+            updateDDay();
+        }
+
         function updateDDay() {
             examTodayTag.style.display = 'none';
 
@@ -608,40 +682,80 @@
                 return;
             }
 
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            const viewingDate = new Date(currentDateObj.getFullYear(), currentDateObj.getMonth(), currentDateObj.getDate());
+            viewingDate.setHours(0, 0, 0, 0);
 
             const target = new Date(ddayDate);
             target.setHours(0, 0, 0, 0);
 
-            const diffTime = target - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const diffTime = target - viewingDate;
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays > 0) {
                 ddayBadge.textContent = `D-${diffDays}`;
             } else if (diffDays === 0) {
                 ddayBadge.textContent = 'D-DAY';
-                examTodayTag.style.display = 'inline-block'; // 시험 당일 표시
+                examTodayTag.style.display = 'inline-block';
             } else {
                 ddayBadge.textContent = `D+${Math.abs(diffDays)}`;
             }
         }
 
-        ddayInput.value = ddayDate;
         ddayInput.addEventListener('change', (e) => {
             ddayDate = e.target.value;
             localStorage.setItem('planner_dday', ddayDate);
             updateDDay();
         });
 
+        // 날짜 이동 이벤트
+        prevDayBtn.addEventListener('click', () => {
+            currentDateObj.setDate(currentDateObj.getDate() - 1);
+            initDayData();
+        });
+
+        nextDayBtn.addEventListener('click', () => {
+            currentDateObj.setDate(currentDateObj.getDate() + 1);
+            initDayData();
+        });
+
+        todayJumpBtn.addEventListener('click', () => {
+            currentDateObj = new Date();
+            initDayData();
+        });
+
+        // 2. 날짜별 데이터 관리 (할 일, 타이머)
+        function getCurrentDateKey() {
+            return formatDateKey(currentDateObj);
+        }
+
+        function getTodosForCurrentDate() {
+            const key = `planner_todos_${getCurrentDateKey()}`;
+            return JSON.parse(localStorage.getItem(key)) || [];
+        }
+
+        function saveTodosForCurrentDate(todos) {
+            const key = `planner_todos_${getCurrentDateKey()}`;
+            localStorage.setItem(key, JSON.stringify(todos));
+        }
+
+        function getStudySecondsForCurrentDate() {
+            const key = `planner_study_seconds_${getCurrentDateKey()}`;
+            return parseInt(localStorage.getItem(key) || '0', 10);
+        }
+
+        function saveStudySecondsForCurrentDate(secs) {
+            const key = `planner_study_seconds_${getCurrentDateKey()}`;
+            localStorage.setItem(key, secs.toString());
+        }
+
         // 3. 할 일 UI 렌더링
         function renderTodos() {
+            const todos = getTodosForCurrentDate();
             todoListContainer.innerHTML = '';
 
             const total = todos.length;
             const completedCount = todos.filter(t => t.completed).length;
 
-            // 빈 목록 또는 모두 완료 시 문구 제어
             if (total === 0) {
                 emptyState.style.display = 'block';
                 allCompletedBadge.style.display = 'none';
@@ -668,7 +782,6 @@
 
                 content.appendChild(textSpan);
 
-                // 완료 시 오른쪽 끝에 'O' 표시
                 const statusMark = document.createElement('span');
                 statusMark.className = 'status-mark';
                 statusMark.textContent = 'O';
@@ -689,10 +802,10 @@
                 todoListContainer.appendChild(card);
             });
 
-            updateProgress();
+            updateProgress(todos);
         }
 
-        function updateProgress() {
+        function updateProgress(todos) {
             const total = todos.length;
             const completedCount = todos.filter(t => t.completed).length;
 
@@ -705,36 +818,36 @@
             const trimmed = text.trim();
             if (!trimmed) return;
 
+            const todos = getTodosForCurrentDate();
             todos.push({
                 id: Date.now(),
                 text: trimmed,
                 completed: false
             });
 
-            saveTodos();
+            saveTodosForCurrentDate(todos);
             renderTodos();
         }
 
         function toggleTodo(id) {
+            let todos = getTodosForCurrentDate();
             todos = todos.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
-            saveTodos();
+            saveTodosForCurrentDate(todos);
             renderTodos();
         }
 
         function deleteTodo(id) {
+            let todos = getTodosForCurrentDate();
             todos = todos.filter(t => t.id !== id);
-            saveTodos();
+            saveTodosForCurrentDate(todos);
             renderTodos();
         }
 
         function clearCompleted() {
+            let todos = getTodosForCurrentDate();
             todos = todos.filter(t => !t.completed);
-            saveTodos();
+            saveTodosForCurrentDate(todos);
             renderTodos();
-        }
-
-        function saveTodos() {
-            localStorage.setItem('planner_todos', JSON.stringify(todos));
         }
 
         // 4. 주간 시간표 렌더링 (월~금, 7교시)
@@ -757,7 +870,6 @@
 
                     td.textContent = cellVal;
 
-                    // 저장된 기본 틀과 다를 경우 진한 회색 스타일 부여
                     if (cellVal !== defaultVal) {
                         td.classList.add('custom-edited');
                     }
@@ -798,49 +910,11 @@
             localStorage.setItem('planner_timetable', JSON.stringify(timetableData));
         }
 
-        // 현재 입력된 시간표를 새로운 기본 시간표로 설정
         function setAsDefaultTimetable() {
             saveTimetable();
-            // 현재 타임테이블 데이터를 깊은 복사하여 baseTimetable로 설정
             baseTimetable = JSON.parse(JSON.stringify(timetableData));
             localStorage.setItem('planner_base_timetable', JSON.stringify(baseTimetable));
-            
-            // UI 다시 그려서 강조 색상 갱신 (기본 설정되었으므로 흰색으로 초기화됨)
             initTimetable();
-        }
-
-                    td.addEventListener('input', () => {
-                        const currentVal = td.textContent.trim();
-                        if (currentVal !== defaultVal) {
-                            td.classList.add('custom-edited');
-                        } else {
-                            td.classList.remove('custom-edited');
-                        }
-                        saveTimetable();
-                    });
-
-                    tr.appendChild(td);
-                }
-
-                timetableBody.appendChild(tr);
-            }
-        }
-
-        function saveTimetable() {
-            const rows = timetableBody.querySelectorAll('tr');
-            const newData = [];
-
-            rows.forEach(tr => {
-                const rowData = [];
-                const tds = tr.querySelectorAll('td');
-                tds.forEach(td => {
-                    rowData.push(td.textContent.trim());
-                });
-                newData.push(rowData);
-            });
-
-            timetableData = newData;
-            localStorage.setItem('planner_timetable', JSON.stringify(timetableData));
         }
 
         // 5. 순공시간 타이머 로직
@@ -852,15 +926,25 @@
         }
 
         function updateTimerDisplay() {
-            timerDisplay.textContent = formatTime(studySeconds);
+            const secs = getStudySecondsForCurrentDate();
+            timerDisplay.textContent = formatTime(secs);
         }
 
         function startTimer() {
             if (timerInterval) return;
+            activeTimerDateKey = getCurrentDateKey();
+
             timerInterval = setInterval(() => {
-                studySeconds++;
+                if (activeTimerDateKey !== getCurrentDateKey()) {
+                    pauseTimer();
+                    startTimer();
+                    return;
+                }
+
+                let secs = getStudySecondsForCurrentDate();
+                secs++;
+                saveStudySecondsForCurrentDate(secs);
                 updateTimerDisplay();
-                localStorage.setItem('planner_study_seconds', studySeconds.toString());
             }, 1000);
         }
 
@@ -871,9 +955,15 @@
 
         function resetTimer() {
             pauseTimer();
-            studySeconds = 0;
+            saveStudySecondsForCurrentDate(0);
             updateTimerDisplay();
-            localStorage.setItem('planner_study_seconds', '0');
+        }
+
+        // 날짜 전환 시 데이터 동기화
+        function initDayData() {
+            updateDateHeader();
+            renderTodos();
+            updateTimerDisplay();
         }
 
         // 이벤트 연결
@@ -892,12 +982,10 @@
 
         // 앱 최초 구동
         window.addEventListener('DOMContentLoaded', () => {
-            initDate();
-            updateDDay();
-            renderTodos();
+            initDayData();
             initTimetable();
-            updateTimerDisplay();
         });
     </script>
 
-</body></html>
+</body>
+</html>
