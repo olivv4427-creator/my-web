@@ -154,12 +154,6 @@
             font-weight: 700;
         }
 
-        .sync-status {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            margin-left: 8px;
-        }
-
         .logout-btn {
             background: transparent;
             border: 1px solid var(--border-dark);
@@ -627,12 +621,11 @@
     <!-- 2. 로그인 후 메인 플래너 화면 -->
     <div class="app-container" id="appContainer" style="display: none;">
         
-        <!-- 프로필 및 동기화 상태 바 -->
+        <!-- 프로필 바 -->
         <div class="user-bar">
             <div class="user-info">
                 <img src="" alt="Profile" class="user-avatar" id="userAvatar" style="display: none;">
                 <span class="user-name" id="userName">로컬 연습 모드</span>
-                <span class="sync-status" id="syncStatus"></span>
             </div>
             <button class="logout-btn" id="logoutBtn">로그아웃</button>
         </div>
@@ -785,7 +778,6 @@
         
         const userName = document.getElementById('userName');
         const userAvatar = document.getElementById('userAvatar');
-        const syncStatus = document.getElementById('syncStatus');
         const logoutBtn = document.getElementById('logoutBtn');
 
         const ddayBadge = document.getElementById('ddayBadge');
@@ -843,22 +835,14 @@
         let activeTimerDateKey = null;
         let saveDebounceTimer = null;
 
-        // Firebase 연동 저장 / 디바운스
-        function showSyncStatus(text) {
-            if (syncStatus) syncStatus.textContent = text ? `(${text})` : '';
-        }
-
         async function saveUserDataCloud() {
             if (!currentUser || !db) return;
-            showSyncStatus('저장 중…');
             try {
                 // users/{내 uid}/data/todos 문서에 { items: [...] } 구조로 저장
                 const docRef = doc(db, 'users', currentUser.uid, 'data', 'todos');
                 await setDoc(docRef, { items: appData });
-                showSyncStatus('저장됨');
             } catch (err) {
                 console.error("클라우드 저장 실패:", err);
-                showSyncStatus('저장 오류 (로컬에만 저장)');
                 saveUserDataLocal();
             }
         }
@@ -869,7 +853,6 @@
 
             // Firebase 로그인 상태면 클라우드에 0.6초 디바운스 적용 저장
             if (currentUser && isFirebaseActive) {
-                showSyncStatus('저장 대기 중');
                 if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
                 saveDebounceTimer = setTimeout(() => {
                     saveUserDataCloud();
@@ -894,13 +877,11 @@
 
         async function loadUserDataCloud() {
             if (!currentUser || !db) return;
-            showSyncStatus('불러오는 중…');
             try {
                 const docRef = doc(db, 'users', currentUser.uid, 'data', 'todos');
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists() && docSnap.data().items) {
                     appData = { ...appData, ...docSnap.data().items };
-                    showSyncStatus('동기화 완료');
                 } else {
                     // 데이터가 없으면 기존 로컬 데이터 업로드
                     loadUserDataLocal();
@@ -908,7 +889,6 @@
                 }
             } catch (err) {
                 console.error("클라우드 불러오기 오류:", err);
-                showSyncStatus('로컬 데이터 불러옴');
                 loadUserDataLocal();
             }
             initDayData();
@@ -936,7 +916,6 @@
                 userName.textContent = '연습 모드 (로컬 전용)';
                 userAvatar.style.display = 'none';
                 logoutBtn.textContent = '로그인 화면으로';
-                showSyncStatus('브라우저 저장 중');
                 loadUserDataLocal();
                 initDayData();
                 initTimetable();
