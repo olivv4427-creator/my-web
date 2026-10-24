@@ -748,15 +748,15 @@
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // ========================================================
-        // [설정값] 파이어베이스 프로젝트 설정값을 아래 객체에 적용하세요.
+        // [설정값] 파이어베이스 프로젝트 설정값
         // ========================================================
         const firebaseConfig = {
-            apiKey: "",
-            authDomain: "",
-            projectId: "",
-            storageBucket: "",
-            messagingSenderId: "",
-            appId: ""
+            apiKey: "AIzaSyDnB7rAPY8pomNIA4hYtVFjeEJF4gLRug8",
+            authDomain: "my-web-8b9b9.firebaseapp.com",
+            projectId: "my-web-8b9b9",
+            storageBucket: "my-web-8b9b9.firebasestorage.app",
+            messagingSenderId: "438000225132",
+            appId: "1:438000225132:web:954caeab4dc9a6444b0149"
         };
 
         let app, auth, db;
@@ -852,7 +852,7 @@
             if (!currentUser || !db) return;
             showSyncStatus('저장 중…');
             try {
-                // RULE 1: STRICT PATH users/{userId}/data/todos
+                // users/{내 uid}/data/todos 문서에 { items: [...] } 구조로 저장
                 const docRef = doc(db, 'users', currentUser.uid, 'data', 'todos');
                 await setDoc(docRef, { items: appData });
                 showSyncStatus('저장됨');
@@ -921,6 +921,7 @@
             appContainer.style.display = 'grid';
 
             if (user) {
+                currentUser = user;
                 userName.textContent = user.displayName || user.email || '사용자';
                 if (user.photoURL) {
                     userAvatar.src = user.photoURL;
@@ -931,6 +932,7 @@
                 logoutBtn.textContent = '로그아웃';
                 loadUserDataCloud();
             } else {
+                currentUser = null;
                 userName.textContent = '연습 모드 (로컬 전용)';
                 userAvatar.style.display = 'none';
                 logoutBtn.textContent = '로그인 화면으로';
@@ -983,14 +985,16 @@
         if (isFirebaseActive && auth) {
             onAuthStateChanged(auth, (user) => {
                 if (user) {
-                    currentUser = user;
                     showMainPlannerUI(user);
                 } else {
-                    currentUser = null;
+                    if (currentUser) {
+                        currentUser = null;
+                        showLoginScreenUI();
+                    }
                 }
             });
         } else {
-            // Firebase 비활성화 시 연습모드로 시작 안내 가능
+            showLoginScreenUI();
         }
 
         // --- 플래너 로직 ---
