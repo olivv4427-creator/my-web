@@ -615,7 +615,6 @@
             구글 계정으로 로그인
         </button>
         <button class="demo-mode-btn" id="demoModeBtn">로그인 없이 로컬 저장 모드로 시작</button>
-        <div class="login-error-msg" id="loginErrorMsg"></div>
     </div>
 
     <!-- 2. 로그인 후 메인 플래너 화면 -->
@@ -774,7 +773,6 @@
         const appContainer = document.getElementById('appContainer');
         const googleLoginBtn = document.getElementById('googleLoginBtn');
         const demoModeBtn = document.getElementById('demoModeBtn');
-        const loginErrorMsg = document.getElementById('loginErrorMsg');
         
         const userName = document.getElementById('userName');
         const userAvatar = document.getElementById('userAvatar');
@@ -925,25 +923,18 @@
         function showLoginScreenUI() {
             loginScreen.style.display = 'flex';
             appContainer.style.display = 'none';
-            loginErrorMsg.style.display = 'none';
-            loginErrorMsg.textContent = '';
         }
 
         // 이벤트 - 로그인/로그아웃
         googleLoginBtn.addEventListener('click', async () => {
             if (!isFirebaseActive) {
-                loginErrorMsg.textContent = 'Firebase 설정값이 입력되지 않았습니다. 연습 모드를 이용해 주세요.';
-                loginErrorMsg.style.display = 'block';
                 return;
             }
             const provider = new GoogleAuthProvider();
             try {
-                loginErrorMsg.style.display = 'none';
                 await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("구글 로그인 실패:", error);
-                loginErrorMsg.textContent = `로그인 오류 [${error.code}]: ${error.message}`;
-                loginErrorMsg.style.display = 'block';
             }
         });
 
