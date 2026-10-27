@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCT WISH (위시돌) 정보 검색기</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Noto Sans KR & Montserrat) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        wishGreen: '#90EE90',
+                        wishNeon: '#39FF14',
+                        wishBg: '#0F172A',
+                        wishCard: '#1E293B'
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f0fdf4;
+            color: #0f172a;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .glow-text {
+            text-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+        .glass-card:hover {
+            border-color: rgba(34, 197, 94, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.15);
+        }
+        .tab-active {
+            background-color: #ffffff;
+            color: #047857;
+            font-weight: 700;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-green-400 selection:text-slate-900">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-200 bg-white/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetFilter()">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-green-400 to-emerald-500 flex items-center justify-center text-white font-black text-xl shadow-md shadow-green-500/20">
+                    W
+                </div>
+                <div>
+                    <h1 class="text-2xl font-montserrat font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600">
+                        NCT WISH
+                    </h1>
+                    <p class="text-xs text-slate-500 font-medium">위시돌 아카이브 & 검색</p>
+                </div>
+            </div>
+            
+            <!-- Quick Info Badge -->
+            <div class="hidden md:flex items-center space-x-4 text-xs font-medium">
+                <div class="bg-emerald-50 px-4 py-2 rounded-full border border-emerald-200/80 flex items-center space-x-2 text-slate-700">
+                    <i class="fa-solid fa-cake-candles text-green-600"></i>
+                    <span>데뷔일: <strong class="text-green-700">2024.02.21</strong></span>
+                </div>
+                <div class="bg-emerald-50 px-4 py-2 rounded-full border border-emerald-200/80 flex items-center space-x-2 text-slate-700">
+                    <i class="fa-solid fa-users text-emerald-600"></i>
+                    <span>멤버: <strong class="text-emerald-700">6명 (시온, 리쿠, 유우시, 재희, 료, 사쿠야)</strong></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        
+        <!-- Hero & Debut Banner -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-green-500 p-6 sm:p-10 mb-10 text-white shadow-xl">
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="relative z-10 grid md:grid-cols-3 gap-6 items-center">
+                <div class="md:col-span-2 space-y-4">
+                    <span class="px-3 py-1 text-xs font-semibold uppercase tracking-widest bg-white/20 text-white rounded-full backdrop-blur-md">
+                        WISH FOR OUR WISH
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
+                        NCT WISH <span class="text-yellow-300">데뷔 & 정보 센터</span>
+                    </h2>
+                    <p class="text-emerald-50 text-sm sm:text-base leading-relaxed">
+                        시온, 리쿠, 유우시, 재희, 료, 사쿠야 6명의 청량한 에너지로 가득 찬 NCT의 마지막 서브 그룹! <br class="hidden sm:inline">
+                        음악과 사랑으로 모든 이들의 소원과 꿈을 응원하고 이루어주는 위시돌입니다.
+                    </p>
+                    
+                    <!-- D-Day Counter / Stats -->
+                    <div class="pt-2 flex flex-wrap gap-4 text-slate-800">
+                        <div class="bg-white/90 backdrop-blur-md px-4 py-3 rounded-2xl shadow-sm text-center min-w-[120px]">
+                            <span class="block text-xs text-slate-500 font-medium">공식 데뷔일</span>
+                            <span class="text-lg font-bold text-emerald-700">2024.02.21</span>
+                        </div>
+                        <div class="bg-white/90 backdrop-blur-md px-4 py-3 rounded-2xl shadow-sm text-center min-w-[120px]">
+                            <span class="block text-xs text-slate-500 font-medium">데뷔 무대</span>
+                            <span class="text-lg font-bold text-emerald-700">도쿄돔 SMTOWN</span>
+                        </div>
+                        <div class="bg-white/90 backdrop-blur-md px-4 py-3 rounded-2xl shadow-sm text-center min-w-[120px]">
+                            <span class="block text-xs text-slate-500 font-medium">데뷔 싱글</span>
+                            <span class="text-lg font-bold text-emerald-700">WISH</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Upcoming Birthday Card -->
+                <div class="bg-white text-slate-800 rounded-2xl p-5 shadow-lg relative overflow-hidden border border-emerald-100">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+                        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-gift"></i> 다가오는 멤버 생일
+                        </span>
+                        <span id="dday-tag" class="text-xs font-bold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">
+                            D-Day
+                        </span>
+                    </div>
+                    <div id="next-birthday-info" class="space-y-2">
+                        <!-- JS로 동적 로드됨 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="mb-8 space-y-4">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <!-- Navigation Tabs -->
+                <div class="flex bg-slate-200/80 p-1.5 rounded-2xl w-full md:w-auto overflow-x-auto whitespace-nowrap gap-1">
+                    <button id="tab-all" onclick="switchTab('all')" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 tab-active">
+                        <i class="fa-solid fa-border-all mr-1.5"></i> 전체보기
+                    </button>
+                    <button id="tab-members" onclick="switchTab('members')" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all duration-200">
+                        <i class="fa-solid fa-user-group mr-1.5"></i> 멤버 & 생일
+                    </button>
+                    <button id="tab-songs" onclick="switchTab('songs')" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all duration-200">
+                        <i class="fa-solid fa-music mr-1.5"></i> 대표 노래 & 응원법
+                    </button>
+                    <button id="tab-schedules" onclick="switchTab('schedules')" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all duration-200">
+                        <i class="fa-solid fa-calendar-days mr-1.5"></i> 행사 & 자컨 일정
+                    </button>
+                    <button id="tab-quiz" onclick="switchTab('quiz')" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all duration-200">
+                        <i class="fa-solid fa-gamepad mr-1.5"></i> 위시 퀴즈
+                    </button>
+                    <button id="tab-wishwall" onclick="switchTab('wishwall')" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all duration-200">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> 응원 소원함
+                    </button>
+                    <button id="tab-history" onclick="switchTab('history')" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all duration-200">
+                        <i class="fa-solid fa-timeline mr-1.5"></i> 위시 타임라인
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="relative w-full md:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="멤버명, 노래, 응원법, 일정 검색..." 
+                        class="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-green-500 shadow-sm transition-colors">
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 1: Members List -->
+        <section id="section-members" class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-star text-emerald-500"></i> NCT WISH 멤버 프로필 (생일순)
+                </h3>
+                <span class="text-xs text-slate-500">카드를 클릭하여 상세 정보와 한 줄 소개를 확인해보세요.</span>
+            </div>
+            
+            <div id="members-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- JS dynamic generation -->
+            </div>
+        </section>
+
+        <!-- SECTION 2: Songs & Fan Chants -->
+        <section id="section-songs" class="mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-compact-disc text-emerald-500"></i> NCT WISH 대표 노래 & 응원법 가이드
+                </h3>
+                <span class="text-xs text-slate-500">카드를 클릭하여 곡 설명 및 응원법 포인트를 확인하세요.</span>
+            </div>
+
+            <div id="songs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- JS dynamic generation -->
+            </div>
+        </section>
+
+        <!-- SECTION 3: Official & YouTube Schedules -->
+        <section id="section-schedules" class="mb-12">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-check text-emerald-500"></i> 공식 행사 및 유튜브/자컨 일정
+                    </h3>
+                    <span class="text-xs text-slate-500">유튜브 예능, 라이브 스트리밍 및 공식 이벤트 안내</span>
+                </div>
+                <button onclick="fetchLatestSchedulesAI()" id="ai-update-btn" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl text-xs font-bold shadow-md shadow-emerald-500/20 flex items-center gap-2 transition-all active:scale-95">
+                    <i class="fa-solid fa-arrows-rotate" id="refresh-icon"></i>
+                    <span>AI 실시간 최신 자컨/일정 업데이트</span>
+                </button>
+            </div>
+
+            <!-- AI Status Toast -->
+            <div id="ai-status" class="hidden mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-medium flex items-center gap-2">
+                <i class="fa-solid fa-spinner animate-spin text-emerald-600"></i>
+                <span id="ai-status-text">구글 검색을 통해 최신 NCT WISH 자컨 및 일정을 탐색 중입니다...</span>
+            </div>
+
+            <div id="schedules-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- JS dynamic generation -->
+            </div>
+        </section>
+
+        <!-- SECTION: WISH Quiz Game -->
+        <section id="section-quiz" class="mb-12 hidden">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200 bg-white/90">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 border-b border-slate-100 pb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-gamepad text-emerald-500"></i> NCT WISH 위시돌 팬 입덕 퀴즈 (랜덤 10문항)
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1">풀 때마다 문제와 보기가 무작위로 새로 섞입니다! 최고의 시즈니에 도전하세요 ⭐</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="quiz-score-badge" class="px-3 py-1.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full border border-emerald-200">
+                            점수: 0 / 0
+                        </span>
+                        <button onclick="resetAndShuffleQuiz()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-full transition-all flex items-center gap-1">
+                            <i class="fa-solid fa-shuffle"></i> 다시 섞기
+                        </button>
+                    </div>
+                </div>
+
+                <div id="quiz-container" class="space-y-6">
+                    <!-- Dynamic Quiz Content -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: Fan Wish Wall -->
+        <section id="section-wishwall" class="mb-12 hidden">
+            <div class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200 bg-white/90">
+                <div class="mb-6">
+                    <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-emerald-500"></i> 시즈니 소원함 & 응원 보드
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">NCT WISH 멤버들에게 전하고 싶은 응원의 메시지를 남겨보세요! ⭐</p>
+                </div>
+
+                <!-- Input Box -->
+                <div class="bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200/80 mb-6 space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="text" id="wish-nickname" placeholder="닉네임 (예: 위시덕후)" class="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500">
+                        <select id="wish-member" class="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500">
+                            <option value="전체">멤버 전체에게 ❤️</option>
+                            <option value="시온">🌷 시온</option>
+                            <option value="리쿠">🐿️ 리쿠</option>
+                            <option value="유우시">⭐️ 유우시</option>
+                            <option value="재희">🌳 재희</option>
+                            <option value="료">🦭 료</option>
+                            <option value="사쿠야">🥐 사쿠야</option>
+                        </select>
+                    </div>
+                    <textarea id="wish-message" rows="2" placeholder="응원글이나 소원을 작성해주세요! (예: 무대 위에서 항상 빛나길 바라!)" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500"></textarea>
+                    <div class="flex justify-end">
+                        <button onclick="addWishMessage()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md transition-all">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> 소원 남기기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages Grid -->
+                <div id="wish-messages-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Dynamic Wish Cards -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Key Milestone / History -->
+        <section id="section-history" class="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200 mb-12">
+            <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-timeline text-emerald-500"></i> 위시돌 타임라인 & 데뷔 기록
+            </h3>
+            <div class="relative border-l-2 border-emerald-200 pl-6 ml-3 space-y-6">
+                <div class="relative">
+                    <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-500 border-4 border-white"></div>
+                    <span class="text-xs font-bold text-emerald-600">2023.09.07</span>
+                    <h4 class="text-base font-bold text-slate-800 mt-0.5">서바이벌 'NCT Universe : LASTART' 종료</h4>
+                    <p class="text-sm text-slate-600 mt-1">최종 데뷔 멤버 6인 확정 (시온, 리쿠, 유우시, 재희, 료, 사쿠야)</p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-emerald-500 border-4 border-white"></div>
+                    <span class="text-xs font-bold text-emerald-600">2023.10.08</span>
+                    <h4 class="text-base font-bold text-slate-800 mt-0.5">프리 데뷔 싱글 'Hands Up' 발매</h4>
+                    <p class="text-sm text-slate-600 mt-1">NCT NEW TEAM 명의로 프리 데뷔 활동 및 투어 진행</p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-emerald-500 bg-white"></div>
+                    <span class="text-xs font-bold text-emerald-600">2024.02.21</span>
+                    <h4 class="text-base font-bold text-slate-800 mt-0.5">정식 데뷔 (도쿄돔 SMTOWN LIVE)</h4>
+                    <p class="text-sm text-slate-600 mt-1">데뷔 싱글 'WISH' 무대 최초 공개 및 정식 활동 개막!</p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full border-2 border-emerald-500 bg-white"></div>
+                    <span class="text-xs font-bold text-emerald-600">2024.09.24</span>
+                    <h4 class="text-base font-bold text-slate-800 mt-0.5">첫 미니 앨범 'Steady' 발매</h4>
+                    <p class="text-sm text-slate-600 mt-1">선주문량 80만 장 돌파, 2024년 신인 그룹 음반 파워 입증</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for Member & Song Details -->
+    <div id="itemModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl p-6 sm:p-8 relative shadow-2xl animate-fade-in max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modalContent">
+                <!-- Modal Dynamic Content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 py-6 mt-12 bg-white text-center text-xs text-slate-500">
+        <p>NCT WISH 팬용 정보 검색 & 안내 웹페이지입니다.</p>
+        <p class="mt-1 font-semibold text-emerald-600">WISH FOR OUR WISH ⭐ NCT WISH</p>
+    </footer>
+
+    <!-- JavaScript Data and Logic -->
+    <script>
+        // NCT WISH 멤버 데이터
+        const members = [
+            {
+                name: "시온",
+                realName: "오시온 (Oh Sion)",
+                birth: "2002.05.11",
+                birthMonth: 5,
+                birthDay: 11,
+                role: "리더, 보컬, 댄서",
+                nationality: "대한민국 🇰🇷",
+                color: "green",
+                emoji: "🌷",
+                summary: "든든하고 다정한 위시의 맏형 리더",
+                desc: "NCT WISH의 리더이자 든든한 맏형입니다. 비율이 돋보이는 외모와 차분하고 따뜻한 리더십, 감성적인 보컬 음색을 겸비하고 있어 팀의 중심을 굳건히 잡아주는 멤버입니다."
+            },
+            {
+                name: "리쿠",
+                realName: "마에다 리쿠 (Maeda Riku)",
+                birth: "2003.06.28",
+                birthMonth: 6,
+                birthDay: 28,
+                role: "메인래퍼, 댄서",
+                nationality: "일본 🇯🇵",
+                color: "emerald",
+                emoji: "🐿️",
+                summary: "무대를 찢는 강렬한 톤의 메인래퍼",
+                desc: "개성 넘치는 랩 톤과 파워풀한 무대 매너를 가진 메인래퍼입니다. 쿨하고 세련된 인상 뒤에 장난기 넘치는 반전 매력과 탄탄한 춤 실력으로 무대 몰입도를 높입니다."
+            },
+            {
+                name: "유우시",
+                realName: "토쿠노 유우시 (Tokuno Yushi)",
+                birth: "2004.04.05",
+                birthMonth: 4,
+                birthDay: 5,
+                role: "메인댄서, 보컬",
+                nationality: "일본 🇯🇵",
+                color: "teal",
+                emoji: "⭐️",
+                summary: "독보적 음색과 우아한 춤선의 메인댄서",
+                desc: "매혹적이고 귀에 꽂히는 음색, 우아하면서도 깔끔한 춤선이 일품인 메인댄서입니다. 특유의 몽환적이고 매력적인 분위기(아우라)로 많은 팬들을 사로잡는 핵심 멤버입니다."
+            },
+            {
+                name: "재희",
+                realName: "김대영 (Kim Daeyoung)",
+                birth: "2005.06.21",
+                birthMonth: 6,
+                birthDay: 21,
+                role: "메인보컬",
+                nationality: "대한민국 🇰🇷",
+                color: "cyan",
+                emoji: "🌳",
+                summary: "시원하고 폭발적인 가창력의 메인보컬",
+                desc: "맑고 파워풀한 고음을 자랑하는 위시의 시원한 메인보컬입니다. 항상 긍정적인 에너지와 솔직하고 다정한 모습으로 팀원들과 팬들에게 웃음을 주는 분위기 메이커입니다."
+            },
+            {
+                name: "료",
+                realName: "히로세 료 (Hirose Ryo)",
+                birth: "2007.08.04",
+                birthMonth: 8,
+                birthDay: 4,
+                role: "보컬, 댄서",
+                nationality: "일본 🇯🇵",
+                color: "lime",
+                emoji: "🦭",
+                summary: "성실함과 통통 튀는 매력의 보컬",
+                desc: "NCT의 오래된 성덕이자 뜨거운 열정을 지닌 성실파 멤버입니다. 통통 튀는 표정 연기와 에너제틱한 무대 퍼포먼스로 귀여우면서도 무서운 기량의 성장세를 보여줍니다."
+            },
+            {
+                name: "사쿠야",
+                realName: "후지나가 사쿠야 (Fujinaga Sakuya)",
+                birth: "2007.11.18",
+                birthMonth: 11,
+                birthDay: 18,
+                role: "래퍼, 막내",
+                nationality: "일본 🇯🇵",
+                color: "emerald",
+                emoji: "🥐",
+                summary: "반전 중저음 랩을 구사하는 막둥이",
+                desc: "NCT WISH의 막둥이(막내)입니다. 상큼하고 해맑은 외모 뒤에 매력적인 중저음 톤 랩을 구사하는 반전 매력이 있으며, 빵을 아주 좋아하는 엉뚱함으로 인기를 얻고 있습니다."
+            }
+        ];
+
+        // NCT WISH 노래 및 응원법 데이터
+        const songs = [
+            {
+                title: "WISH",
+                type: "데뷔 싱글 (Debut Single)",
+                release: "2024.02.28",
+                desc: "미래를 향한 포부와 소원을 담은 올드스쿨 힙합 기반의 청량 댄스 곡.",
+                badge: "타이틀곡",
+                fanchant: [
+                    "전주 시작: (오시온! 마에다리쿠! 토쿠노유우시! 김대영! 히로세료! 후지나가사쿠야! 엔씨티 위시!)",
+                    "후공 : Let's WISH! (엔! 씨! 티! 위! 시!)",
+                    "하이라이트 : 'Let's fly up high' 가사 뒤 떼창 및 이름 연호"
+                ]
+            },
+            {
+                title: "Songbird",
+                type: "JAPAN / KOREA 싱글",
+                release: "2024.07.01",
+                desc: "행운을 전하는 기적의 새처럼 소원을 이루어주겠다는 에너지 넘치는 팝 댄스 곡.",
+                badge: "타이틀곡",
+                fanchant: [
+                    "도입부 : (Songbird! Fly High! NCT WISH!)",
+                    "후렴구 : 'Fly away~' 구절에 맞춰 (날아가! 함께가!) 외치기",
+                    "브릿지 : 멤버 이름을 순서대로 정확한 리듬에 맞춰 함성"
+                ]
+            },
+            {
+                title: "Steady",
+                type: "첫 번째 미니앨범",
+                release: "2024.09.24",
+                desc: "우리의 소중한 만남과 연결이 영원히(Steady) 이어지길 바라는 마음을 담은 곡.",
+                badge: "타이틀곡",
+                fanchant: [
+                    "도입 비트 : (영원히 Steady! NCT WISH!)",
+                    "후렴 : 'Keep it steady' 가사 맞춰 따라부르기",
+                    "엔딩 : (영원히 함께해! 엔시티 위시!)"
+                ]
+            },
+            {
+                title: "Sail Away",
+                type: "데뷔 싱글 수록곡",
+                release: "2024.02.28",
+                desc: "밝고 경쾌한 멜로디 위에 앞으로 펼쳐질 항해에 대한 설렘을 담아낸 서머 감성 팝.",
+                badge: "수록곡",
+                fanchant: [
+                    "후렴 박수 리듬 (짝! 짝! 짝짝!) 및 'Sail Away' 후창"
+                ]
+            },
+            {
+                title: "3분까진 필요 없어 (3 Minutes)",
+                type: "미니 1집 수록곡",
+                release: "2024.09.24",
+                desc: "짧은 시간 안에 상대의 마음을 사로잡겠다는 리드미컬하고 위트 넘치는 팬 추천 곡.",
+                badge: "인기 수록곡",
+                fanchant: [
+                    "카운트다운 파트 : (3, 2, 1, Go!) 떼창"
+                ]
+            },
+            {
+                title: "Hands Up",
+                type: "프리 데뷔 싱글",
+                release: "2023.10.08",
+                desc: "손을 높이 들고 희망을 향해 올라가자는 에너제틱한 비트의 프리 데뷔곡.",
+                badge: "프리데뷔",
+                fanchant: [
+                    "후렴구 : (Hands Up! Hands Up!) 피켓 올리기 및 떼창"
+                ]
+            }
+        ];
+
+        // 일정 데이터
+        let schedules = [
+            {
+                category: "유튜브 / 자컨",
+                title: "NCT WISH 자체 예능 'WISH BAKERY' 공개",
+                date: "2026.10.29 (목) 18:00 (매주 목요일)",
+                platform: "공식 YouTube 채널",
+                desc: "멤버들의 제과제빵 도전기 및 유쾌한 케미스트리를 볼 수 있는 팬 필수 시청 자컨!",
+                type: "YouTube"
+            },
+            {
+                category: "공식 행사",
+                title: "2026 NCT WISH FANMEETING TOUR IN TAIPEI",
+                date: "2026.11.14 (토) - 2026.11.15 (일)",
+                platform: "오프라인 공연장 & Weverse Live",
+                desc: "글로벌 팬들과 직접 소통하는 위시돌의 단독 팬미팅 및 콘서트 무대.",
+                type: "Event"
+            },
+            {
+                category: "유튜브 / 라이브",
+                title: "멤버 사쿠야 생일 기념 특별 라이브",
+                date: "2026.11.18 (수) 19:00",
+                platform: "Weverse & YouTube",
+                desc: "막내 사쿠야의 생일을 맞아 진행하는 콤비 라이브, 케이크 메이킹 및 Q&A 토크.",
+                type: "Live"
+            },
+            {
+                category: "방송 / 미디어",
+                title: "연말 특별 음악방송 무대 출연",
+                date: "2026.12.25 (금) 17:30",
+                platform: "지상파/케이블 방송",
+                desc: "특별한 스페셜 무대와 연말 기념 퍼포먼스를 선보이는 방송 출연 일정.",
+                type: "Media"
+            }
+        ];
+
+        // 퀴즈 데이터베이스 (10문항)
+        const rawQuizList = [
+            {
+                question: "NCT WISH의 정식 데뷔일은 언제일까요?",
+                options: ["2024년 2월 21일", "2023년 10월 8일", "2024년 3월 1일", "2024년 9월 24일"],
+                correctAnswer: "2024년 2월 21일",
+                explanation: "NCT WISH는 2024년 2월 21일 도쿄돔 SMTOWN LIVE 무대에서 정식 데뷔했습니다!"
+            },
+            {
+                question: "NCT WISH의 메인래퍼이자 🐿️ (다람쥐) 이모지를 사용하는 멤버는?",
+                options: ["리쿠", "시온", "유우시", "사쿠야"],
+                correctAnswer: "리쿠",
+                explanation: "다람쥐 이모지🐿️와 강렬한 랩 톤을 담당하는 메인래퍼는 마에다 리쿠입니다!"
+            },
+            {
+                question: "NCT WISH의 첫 번째 미니앨범 타이틀곡 제목은?",
+                options: ["Steady", "WISH", "Songbird", "Hands Up"],
+                correctAnswer: "Steady",
+                explanation: "2024년 9월 발매되어 선주문 80만 장을 돌파한 미니 1집 타이틀곡은 'Steady'입니다!"
+            },
+            {
+                question: "NCT WISH의 리더이자 다정한 맏형인 멤버는 누구일까요?",
+                options: ["시온", "재희", "료", "유우시"],
+                correctAnswer: "시온",
+                explanation: "팀의 중심을 단단히 잡아주는 맏형 리더는 오시온(2002년생)입니다!"
+            },
+            {
+                question: "NCT WISH 멤버 중 한국인 멤버(2명)는 누구와 누구일까요?",
+                options: ["시온, 재희", "시온, 유우시", "리쿠, 재희", "료, 사쿠야"],
+                correctAnswer: "시온, 재희",
+                explanation: "시온(오시온)과 재희(김대영)가 팀 내 한국인 멤버입니다."
+            },
+            {
+                question: "NCT WISH의 막내(막둥이)이며 🥐 (크루아상) 이모지를 즐겨쓰는 멤버는?",
+                options: ["사쿠야", "료", "재희", "유우시"],
+                correctAnswer: "사쿠야",
+                explanation: "2007년 11월생 막둥이 사쿠야는 빵을 아주 좋아하는 크루아상 이모지🥐의 주인공입니다!"
+            },
+            {
+                question: "NCT WISH가 데뷔 전 프리 데뷔 활동 시기에 발표했던 곡은?",
+                options: ["Hands Up", "Sail Away", "Songbird", "3분까진 필요 없어"],
+                correctAnswer: "Hands Up",
+                explanation: "'NCT NEW TEAM'으로 활동하던 2023년 10월 발표한 프리 데뷔곡은 'Hands Up'입니다!"
+            },
+            {
+                question: "팀 내 메인보컬로서 시원하고 파워풀한 고음을 담당하는 멤버는?",
+                options: ["재희", "시온", "리쿠", "료"],
+                correctAnswer: "재희",
+                explanation: "시원한 가창력과 긍정적인 에너지를 지닌 메인보컬은 재희(김대영)입니다!"
+            },
+            {
+                question: "NCT WISH 멤버들을 선발했던 SM의 서바이벌 리얼리티 프로그램 이름은?",
+                options: ["NCT Universe : LASTART", "NCT World 2.0", "NCT Life", "NCT Zone"],
+                correctAnswer: "NCT Universe : LASTART",
+                explanation: "2023년 방송된 'NCT Universe : LASTART'를 통해 최종 6인의 멤버가 선발되었습니다!"
+            },
+            {
+                question: "NCT WISH의 메인댄서이자 몽환적인 음색과 ⭐️ (별) 이모지를 가진 멤버는?",
+                options: ["유우시", "리쿠", "료", "시온"],
+                correctAnswer: "유우시",
+                explanation: "독보적인 춤선과 매력적인 음색을 자랑하는 메인댄서는 유우시입니다!"
+            }
+        ];
+
+        let activeQuizList = [];
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+
+        // 배열 무작위 셔플 함수
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Sample Fan Wish Messages
+        let wishList = [
+            { name: "위시소원", member: "전체", msg: "위시돌 평생 함께 가자! 항상 응원해 ⭐", date: "2026.10.27" },
+            { name: "시즈니1004", member: "시온", msg: "시온 리더님 항상 고맙고 힘내요 🌷", date: "2026.10.26" },
+            { name: "빵쿠야", member: "사쿠야", msg: "사쿠야 오늘도 맛있는 빵 많이 먹어! 🥐", date: "2026.10.25" }
+        ];
+
+        let activeTab = 'all';
+
+        // Initialize Page
+        window.onload = function() {
+            renderNextBirthday();
+            renderMembers(members);
+            renderSongs(songs);
+            renderSchedules(schedules);
+            resetAndShuffleQuiz();
+            renderWishWall();
+        };
+
+        // Tab Switching Logic
+        function switchTab(tab) {
+            activeTab = tab;
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('text-slate-600');
+            });
+            
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            if (activeBtn) {
+                activeBtn.classList.add('tab-active');
+                activeBtn.classList.remove('text-slate-600');
+            }
+
+            const sections = {
+                members: document.getElementById('section-members'),
+                songs: document.getElementById('section-songs'),
+                schedules: document.getElementById('section-schedules'),
+                quiz: document.getElementById('section-quiz'),
+                wishwall: document.getElementById('section-wishwall'),
+                history: document.getElementById('section-history')
+            };
+
+            if (tab === 'all') {
+                Object.values(sections).forEach(sec => sec.style.display = 'block');
+            } else {
+                Object.keys(sections).forEach(key => {
+                    sections[key].style.display = (key === tab) ? 'block' : 'none';
+                });
+            }
+        }
+
+        // Gemini AI API Real-Time Search for Latest Schedules
+        async function fetchLatestSchedulesAI() {
+            const statusBox = document.getElementById('ai-status');
+            const statusText = document.getElementById('ai-status-text');
+            const refreshIcon = document.getElementById('refresh-icon');
+
+            statusBox.classList.remove('hidden');
+            refreshIcon.classList.add('animate-spin');
+            statusText.innerText = "Gemini AI로 NCT WISH의 최신 자컨 및 공식 일정을 탐색 중입니다...";
+
+            try {
+                const systemPrompt = "NCT WISH의 가장 최근 공개된 공식 일정, 유튜브 자체 콘텐츠(자컨), 컴백/행사 소식 3가지를 구글 검색하여 정확한 한국어 JSON 형식 배열로 응답해주세요. 날짜(date) 필드에는 '2026.XX.XX (요일) 시:분' 형태로 명확한 연도와 날짜를 반드시 포함해주세요.";
+                const userQuery = "NCT WISH 최신 자컨 유튜브 일정 공식 이벤트 날짜 포함 소식 알려줘";
+                
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    tools: [{ "google_search": {} }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "ARRAY",
+                            items: {
+                                type: "OBJECT",
+                                properties: {
+                                    category: { type: "STRING" },
+                                    title: { type: "STRING" },
+                                    date: { type: "STRING" },
+                                    platform: { type: "STRING" },
+                                    desc: { type: "STRING" }
+                                },
+                                required: ["category", "title", "date", "platform", "desc"]
+                            }
+                        }
+                    }
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (jsonText) {
+                    const fetchedItems = JSON.parse(jsonText);
+                    if (Array.isArray(fetchedItems) && fetchedItems.length > 0) {
+                        schedules = [...fetchedItems, ...schedules];
+                        renderSchedules(schedules);
+                        statusText.innerText = "✨ 최신 NCT WISH 자컨 및 일정을 성공적으로 불러왔습니다!";
+                    } else {
+                        statusText.innerText = "최신 데이터를 불러왔습니다. 목록을 확인하세요.";
+                    }
+                } else {
+                    statusText.innerText = "최신 자컨 및 일정을 갱신하였습니다.";
+                }
+            } catch (err) {
+                console.error("AI Fetch Error:", err);
+                statusText.innerText = "최신 정보를 가져오는데 실패했습니다. 기존 일정 목록을 표시합니다.";
+            } finally {
+                refreshIcon.classList.remove('animate-spin');
+                setTimeout(() => {
+                    statusBox.classList.add('hidden');
+                }, 4000);
+            }
+        }
+
+        // Render Members
+        function renderMembers(data) {
+            const container = document.getElementById('members-grid');
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400">검색 결과에 해당하는 멤버가 없습니다.</div>`;
+                return;
+            }
+
+            data.forEach(m => {
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-2xl p-6 transition-all duration-300 cursor-pointer flex flex-col justify-between";
+                card.onclick = () => openMemberModal(m);
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-3xl">${m.emoji}</span>
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                🎂 ${m.birth}
+                            </span>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            ${m.name}
+                            <span class="text-xs font-normal text-slate-500">(${m.realName.split(' ')[0]})</span>
+                        </h4>
+                        <p class="text-xs font-semibold text-emerald-600 mt-0.5">${m.summary}</p>
+                        <p class="text-xs text-slate-500 mt-2 font-medium">${m.role}</p>
+                        <p class="text-xs text-slate-600 mt-3 line-clamp-2 leading-relaxed">${m.desc}</p>
+                    </div>
+                    <div class="mt-5 pt-3 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
+                        <span>국적: ${m.nationality}</span>
+                        <span class="text-emerald-600 font-semibold hover:underline">상세 프로필 <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Render Songs & Fan Chants
+        function renderSongs(data) {
+            const container = document.getElementById('songs-grid');
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400">검색 결과에 해당하는 노래가 없습니다.</div>`;
+                return;
+            }
+
+            data.forEach(s => {
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-2xl p-6 transition-all duration-300 relative cursor-pointer flex flex-col justify-between";
+                card.onclick = () => openSongModal(s);
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100/70 text-emerald-700 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-music"></i>
+                            </div>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                ${s.badge}
+                            </span>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-900">${s.title}</h4>
+                        <p class="text-xs text-slate-500 mt-0.5">${s.type} • ${s.release}</p>
+                        <p class="text-xs text-slate-600 mt-3 leading-relaxed">${s.desc}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-xs text-emerald-600 font-semibold">
+                        <span><i class="fa-solid fa-bullhorn mr-1"></i> 응원법 포인트 보기</span>
+                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Render Schedules
+        function renderSchedules(data) {
+            const container = document.getElementById('schedules-grid');
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400">일정 검색 결과가 없습니다.</div>`;
+                return;
+            }
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-2xl p-6 transition-all duration-300 relative";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200">
+                            <i class="fa-brands fa-youtube text-red-500 mr-1"></i> ${item.category}
+                        </span>
+                        <span class="text-xs text-slate-400 font-medium">${item.platform}</span>
+                    </div>
+                    <h4 class="text-base font-bold text-slate-900 mb-2">${item.title}</h4>
+                    <p class="text-xs text-emerald-700 font-bold mb-2 flex items-center gap-1.5 bg-emerald-50/80 px-2.5 py-1.5 rounded-lg border border-emerald-100/80 w-fit">
+                        <i class="fa-regular fa-calendar-days text-emerald-600"></i> ${item.date}
+                    </p>
+                    <p class="text-xs text-slate-600 leading-relaxed">${item.desc}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 퀴즈 셔플 및 초기화
+        function resetAndShuffleQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+
+            const shuffledQuestions = shuffleArray(rawQuizList);
+
+            activeQuizList = shuffledQuestions.map(q => {
+                const shuffledOpts = shuffleArray(q.options);
+                return {
+                    ...q,
+                    options: shuffledOpts
+                };
+            });
+
+            renderQuiz();
+        }
+
+        // Render Quiz
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            const scoreBadge = document.getElementById('quiz-score-badge');
+            scoreBadge.innerText = `점수: ${quizScore} / ${activeQuizList.length}`;
+
+            if (currentQuizIndex >= activeQuizList.length) {
+                const total = activeQuizList.length;
+                const percentage = Math.round((quizScore / total) * 100);
+                
+                let gradeTitle = "입덕 완료 시즈니";
+                let levelDesc = "NCT WISH에 대한 기본적인 정보들을 파악하셨네요!";
+                
+                if (quizScore === 10) {
+                    gradeTitle = "👑 M.V.P 마스터 시즈니";
+                    levelDesc = "모든 문제를 맞히셨습니다! PERFECT SCORE!";
+                } else if (quizScore >= 7) {
+                    gradeTitle = "⭐ 열혈 팬 시즈니";
+                    levelDesc = "위시돌에 대한 깊은 애정과 지식을 보유하고 계십니다.";
+                } else if (quizScore >= 4) {
+                    gradeTitle = "🌱 새싹 시즈니";
+                    levelDesc = "조금만 더 알아가면 완벽해질 수 있어요!";
+                } else {
+                    gradeTitle = "🥐 입덕 준비생";
+                    levelDesc = "프로필과 곡 가이드를 살펴보고 다시 도전해보세요!";
+                }
+
+                container.innerHTML = `
+                    <div class="text-center py-6 space-y-5 animate-fade-in max-w-md mx-auto">
+                        <div class="p-6 bg-slate-50 rounded-3xl border border-slate-200 shadow-inner">
+                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-1">최종 테스트 결과</span>
+                            <div class="text-5xl font-black text-emerald-600 my-2">
+                                ${quizScore} <span class="text-2xl text-slate-400 font-normal">/ ${total}점</span>
+                            </div>
+                            <div class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold border border-emerald-200 mt-1">
+                                정답률 ${percentage}%
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-white rounded-2xl border border-emerald-100 shadow-sm space-y-1">
+                            <h5 class="text-lg font-bold text-slate-900">${gradeTitle}</h5>
+                            <p class="text-xs text-slate-600">${levelDesc}</p>
+                        </div>
+
+                        <div>
+                            <button onclick="resetAndShuffleQuiz()" class="px-6 py-3 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-700 transition-all shadow-md shadow-emerald-500/20 flex items-center gap-2 mx-auto">
+                                <i class="fa-solid fa-rotate-right"></i> 다시 풀기
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const q = activeQuizList[currentQuizIndex];
+            container.innerHTML = `
+                <div class="space-y-4 animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">
+                            문제 ${currentQuizIndex + 1} / ${activeQuizList.length}
+                        </span>
+                        <span class="text-xs text-slate-400">보기도 무작위 배치됨</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-slate-900 leading-snug">${q.question}</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        ${q.options.map((opt, i) => `
+                            <button onclick="checkQuizAnswer('${opt.replace(/'/g, "\\'")}')" class="p-3.5 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-xl text-xs font-medium text-slate-800 text-left transition-all flex items-center justify-between group active:scale-[0.98]">
+                                <span>${i + 1}. ${opt}</span>
+                                <i class="fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-emerald-600"></i>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkQuizAnswer(selectedOptionText) {
+            const q = activeQuizList[currentQuizIndex];
+            if (selectedOptionText === q.correctAnswer) {
+                quizScore++;
+                alert(`✨ 정답입니다! \n\n${q.explanation}`);
+            } else {
+                alert(`❌ 아쉽네요! \n\n정답: ${q.correctAnswer}\n설명: ${q.explanation}`);
+            }
+            currentQuizIndex++;
+            renderQuiz();
+        }
+
+        // Render Fan Wish Wall
+        function renderWishWall() {
+            const container = document.getElementById('wish-messages-grid');
+            container.innerHTML = '';
+
+            wishList.forEach(w => {
+                const card = document.createElement('div');
+                card.className = "bg-emerald-50/40 p-4 rounded-2xl border border-emerald-100 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-emerald-800">To. ${w.member}</span>
+                            <span class="text-[10px] text-slate-400">${w.date}</span>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">"${w.msg}"</p>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-emerald-100/60 text-right">
+                        <span class="text-[11px] font-semibold text-slate-500">- ${w.name} -</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addWishMessage() {
+            const name = document.getElementById('wish-nickname').value.trim() || '익명의 시즈니';
+            const member = document.getElementById('wish-member').value;
+            const msg = document.getElementById('wish-message').value.trim();
+
+            if (!msg) {
+                alert('응원 메시지를 입력해주세요!');
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0].replace(/-/g, '.');
+            wishList.unshift({ name, member, msg, date: today });
+            renderWishWall();
+
+            document.getElementById('wish-message').value = '';
+            alert('소원 메시지가 저장되었습니다! ❤️');
+        }
+
+        // Filter search
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            const filteredMembers = members.filter(m => 
+                m.name.toLowerCase().includes(query) ||
+                m.realName.toLowerCase().includes(query) ||
+                m.role.toLowerCase().includes(query) ||
+                m.birth.includes(query) ||
+                m.summary.toLowerCase().includes(query) ||
+                `${m.birthMonth}월`.includes(query)
+            );
+
+            const filteredSongs = songs.filter(s =>
+                s.title.toLowerCase().includes(query) ||
+                s.type.toLowerCase().includes(query) ||
+                s.desc.toLowerCase().includes(query) ||
+                s.fanchant.some(f => f.toLowerCase().includes(query))
+            );
+
+            const filteredSchedules = schedules.filter(sc =>
+                sc.title.toLowerCase().includes(query) ||
+                sc.category.toLowerCase().includes(query) ||
+                sc.date.toLowerCase().includes(query) ||
+                sc.desc.toLowerCase().includes(query)
+            );
+
+            renderMembers(filteredMembers);
+            renderSongs(filteredSongs);
+            renderSchedules(filteredSchedules);
+        }
+
+        // Calculate Next Birthday
+        function renderNextBirthday() {
+            const now = new Date();
+            let upcoming = [];
+
+            members.forEach(m => {
+                let nextBday = new Date(now.getFullYear(), m.birthMonth - 1, m.birthDay);
+                if (nextBday < now) {
+                    nextBday = new Date(now.getFullYear() + 1, m.birthMonth - 1, m.birthDay);
+                }
+                const diffTime = Math.ceil((nextBday - now) / (1000 * 60 * 60 * 24));
+                upcoming.push({ ...m, diffDays: diffTime });
+            });
+
+            upcoming.sort((a, b) => a.diffDays - b.diffDays);
+            const target = upcoming[0];
+
+            const container = document.getElementById('next-birthday-info');
+            const ddayTag = document.getElementById('dday-tag');
+
+            ddayTag.innerText = target.diffDays === 0 ? "TODAY!" : `D-${target.diffDays}`;
+
+            container.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <span class="text-4xl">${target.emoji}</span>
+                    <div>
+                        <h4 class="text-lg font-bold text-slate-900">${target.name} (${target.realName.split(' ')[0]})</h4>
+                        <p class="text-xs text-slate-500">생일: <span class="text-emerald-700 font-bold">${target.birthMonth}월 ${target.birthDay}일</span></p>
+                    </div>
+                </div>
+                <p class="text-xs text-slate-600 pt-1 font-medium">
+                    🎉 다가오는 NCT WISH 멤버의 생일을 함께 축하해주세요!
+                </p>
+            `;
+        }
+
+        // Reset Filter
+        function resetFilter() {
+            document.getElementById('searchInput').value = '';
+            switchTab('all');
+            renderMembers(members);
+            renderSongs(songs);
+            renderSchedules(schedules);
+        }
+
+        // Modal Functionality for Members
+        function openMemberModal(member) {
+            const modal = document.getElementById('itemModal');
+            const content = document.getElementById('modalContent');
+
+            content.innerHTML = `
+                <div class="text-center mb-5">
+                    <span class="text-5xl block mb-2">${member.emoji}</span>
+                    <h3 class="text-2xl font-extrabold text-slate-900">${member.name}</h3>
+                    <p class="text-xs text-slate-500">${member.realName}</p>
+                    <span class="inline-block mt-2 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold border border-emerald-200">
+                        "${member.summary}"
+                    </span>
+                </div>
+
+                <div class="space-y-2.5 bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm mb-4">
+                    <div class="flex justify-between py-1 border-b border-slate-200">
+                        <span class="text-slate-500 font-medium">생년월일</span>
+                        <span class="text-emerald-700 font-bold">${member.birth}</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-200">
+                        <span class="text-slate-500 font-medium">포지션</span>
+                        <span class="text-slate-800">${member.role}</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-200">
+                        <span class="text-slate-500 font-medium">국적</span>
+                        <span class="text-slate-800">${member.nationality}</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500 font-medium">데뷔일</span>
+                        <span class="text-slate-800">2024.02.21</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="text-xs font-bold text-slate-500 mb-1">멤버 상세 소개</h5>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">${member.desc}</p>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        // Modal Functionality for Songs & Fan Chants
+        function openSongModal(song) {
+            const modal = document.getElementById('itemModal');
+            const content = document.getElementById('modalContent');
+
+            const fanchantHtml = song.fanchant.map(item => `
+                <li class="bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-100 text-xs text-slate-800 font-medium flex items-start gap-2">
+                    <i class="fa-solid fa-volume-high text-emerald-600 mt-0.5"></i>
+                    <span>${item}</span>
+                </li>
+            `).join('');
+
+            content.innerHTML = `
+                <div class="text-center mb-5">
+                    <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-2xl font-bold shadow-lg shadow-emerald-500/20">
+                        <i class="fa-solid fa-music"></i>
+                    </div>
+                    <h3 class="text-2xl font-extrabold text-slate-900">${song.title}</h3>
+                    <p class="text-xs text-slate-500">${song.type} • 발매일: ${song.release}</p>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs sm:text-sm mb-4">
+                    <h5 class="font-bold text-slate-700 mb-1">곡 정보 및 특징</h5>
+                    <p class="text-slate-600 leading-relaxed">${song.desc}</p>
+                </div>
+
+                <div>
+                    <h5 class="text-xs font-bold text-emerald-700 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-bullhorn"></i> 대표 응원법 가이드 & 포인트
+                    </h5>
+                    <ul class="space-y-2">
+                        ${fanchantHtml}
+                    </ul>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('itemModal').classList.add('hidden');
+        }
+
+        // Close Modal when clicking background
+        document.getElementById('itemModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
