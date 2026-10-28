@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hogwarts Emotion & Growth Journal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amberGold: '#d4af37',
+                        parchment: '#1e293b'
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Noto Sans KR', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: radial-gradient(circle at top, #0f172a, #020617);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .magical-font { font-family: 'Cinzel', serif; }
+        .gold-glow { text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+        .magical-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+        /* Sticker Styling */
+        .sticker-badge {
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Chat bubble styles */
+        .chat-bubble-user {
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 12px 12px 0 12px;
+        }
+        .chat-bubble-character {
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px 12px 12px 0;
+        }
+        @media (max-width: 640px) {
+            .mobile-compact-padding {
+                padding: 0.625rem !important;
+            }
+            .mobile-calendar-cell {
+                height: 3.5rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="p-2 sm:p-4 md:p-6 pb-20 sm:pb-24">
+
+    <div class="max-w-7xl mx-auto space-y-3 sm:space-y-6">
+        <!-- Unified Header -->
+        <header class="text-center py-1.5 sm:py-4 border-b border-amber-500/20">
+            <h1 class="magical-font text-xl sm:text-4xl font-bold text-amber-400 gold-glow tracking-wider inline-flex items-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> 호그와트 성장의 서
+            </h1>
+            <p class="text-slate-400 mt-0.5 sm:mt-1 text-[11px] sm:text-sm">나의 감정을 스티커로 기록하고, 캐릭터와 고민을 나누며 기숙사 미션으로 성장하세요.</p>
+        </header>
+
+        <!-- Main Dashboard: 2-Column Integrated Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6">
+
+            <!-- LEFT SIDE: Interactive Sticker Calendar (7 Cols) -->
+            <section class="lg:col-span-7 space-y-3 sm:space-y-4">
+                <div class="magical-card rounded-2xl p-2.5 sm:p-5">
+                    <!-- Calendar Header Navigation -->
+                    <div class="flex justify-between items-center mb-2.5 sm:mb-4">
+                        <button onclick="changeMonth(-1)" class="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 text-[11px] sm:text-xs font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-chevron-left"></i> 이전 달
+                        </button>
+                        <h2 id="calendar-month-year" class="text-sm sm:text-xl font-bold text-amber-400 magical-font"></h2>
+                        <button onclick="changeMonth(1)" class="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 text-[11px] sm:text-xs font-bold flex items-center gap-1">
+                            다음 달 <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Monthly Theme Banner Integration -->
+                    <div id="monthly-theme-banner" class="bg-gradient-to-r from-amber-950/40 via-slate-800 to-amber-950/40 border border-amber-500/30 rounded-xl p-2 sm:p-3 mb-2.5 sm:mb-4 text-xs">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Days of Week Header -->
+                    <div class="grid grid-cols-7 gap-1 mb-1 text-center text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <div class="text-red-400">일</div>
+                        <div>월</div>
+                        <div>화</div>
+                        <div>수</div>
+                        <div>목</div>
+                        <div>금</div>
+                        <div class="text-blue-400">토</div>
+                    </div>
+
+                    <!-- Dynamic Calendar Grid -->
+                    <div id="calendar-grid" class="grid grid-cols-7 gap-1 sm:gap-1.5">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- House Points & Quick Stats Widget -->
+                <div class="magical-card rounded-2xl p-2.5 sm:p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-2 magical-font">
+                            <i class="fa-solid fa-shield-halved text-amber-400"></i> 기숙사점수 현황
+                        </h3>
+                        <span class="text-[9px] sm:text-[11px] text-slate-400">미션 완료시 점수 획득</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-1 sm:gap-2 text-center text-xs">
+                        <div class="bg-red-950/40 border border-red-800/40 p-1 sm:p-2 rounded-xl">
+                            <div class="text-sm sm:text-lg mb-0.5">🦁</div>
+                            <div class="font-bold text-red-400 text-[9px] sm:text-xs">그리핀도르</div>
+                            <div class="text-amber-400 font-bold mt-0.5 magical-font text-xs sm:text-sm" id="score-gryffindor">0점</div>
+                        </div>
+                        <div class="bg-blue-950/40 border border-blue-800/40 p-1 sm:p-2 rounded-xl">
+                            <div class="text-sm sm:text-lg mb-0.5">🦅</div>
+                            <div class="font-bold text-blue-400 text-[9px] sm:text-xs">래번클로</div>
+                            <div class="text-amber-400 font-bold mt-0.5 magical-font text-xs sm:text-sm" id="score-ravenclaw">0점</div>
+                        </div>
+                        <div class="bg-amber-950/30 border border-amber-600/30 p-1 sm:p-2 rounded-xl">
+                            <div class="text-sm sm:text-lg mb-0.5">🦡</div>
+                            <div class="font-bold text-yellow-400 text-[9px] sm:text-xs">후플푸프</div>
+                            <div class="text-amber-400 font-bold mt-0.5 magical-font text-xs sm:text-sm" id="score-hufflepuff">0점</div>
+                        </div>
+                        <div class="bg-emerald-950/40 border border-emerald-800/40 p-1 sm:p-2 rounded-xl">
+                            <div class="text-sm sm:text-lg mb-0.5">🐍</div>
+                            <div class="font-bold text-emerald-400 text-[9px] sm:text-xs">슬리데린</div>
+                            <div class="text-amber-400 font-bold mt-0.5 magical-font text-xs sm:text-sm" id="score-slytherin">0점</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Analytics Mini Widget -->
+                <div class="magical-card rounded-2xl p-2.5 sm:p-4">
+                    <h3 class="text-xs font-bold text-amber-300 mb-1.5 flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-pie text-amber-400"></i> 이번 달 감정 분포
+                    </h3>
+                    <div class="h-28 sm:h-36 flex items-center justify-center">
+                        <canvas id="emotionChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT SIDE: Integrated Journal, Presets & Interactive Character Counseling (5 Cols) -->
+            <section class="lg:col-span-5 space-y-3 sm:space-y-4">
+                
+                <!-- 1. Daily Journal & Preset Spell Selector -->
+                <div class="magical-card rounded-2xl p-3 sm:p-5 space-y-3 sm:space-y-4">
+                    
+                    <!-- Date Picker Bar -->
+                    <div class="flex justify-between items-center border-b border-slate-700/60 pb-2.5">
+                        <div class="flex items-center gap-1.5 sm:gap-2">
+                            <i class="fa-solid fa-quill text-amber-400 text-sm sm:text-lg"></i>
+                            <h2 class="font-bold text-amber-300 text-xs sm:text-base">오늘의 마법 일지</h2>
+                        </div>
+                        <input type="date" id="selected-date" onchange="onDateSelectedChange()" class="bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-lg px-2 py-1 focus:outline-none focus:border-amber-400">
+                    </div>
+
+                    <!-- Emotion Sticker Selection -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">
+                            1. 감정 스티커 선택 <span class="text-slate-400 font-normal text-[10px] sm:text-xs">(달력 기록)</span>
+                        </label>
+                        <div class="grid grid-cols-3 gap-1.5 sm:gap-2" id="emotion-sticker-selector">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Journal Fields with Default Presets -->
+                    <div class="space-y-2.5 pt-1">
+                        <!-- Spell Field -->
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[11px] sm:text-xs font-semibold text-slate-300">
+                                    <i class="fa-solid fa-wand-sparkles text-amber-400"></i> 극복한 마법 (주문)
+                                </label>
+                                <button type="button" onclick="togglePreset('spell')" class="text-[10px] text-amber-400 hover:underline">
+                                    + 목록
+                                </button>
+                            </div>
+                            <div id="preset-spell-list" class="hidden mb-2 p-1.5 bg-slate-900 rounded-lg border border-amber-500/30 flex flex-wrap gap-1">
+                                <!-- Populated JS -->
+                            </div>
+                            <input type="text" id="input-spell" placeholder="예: 알로호모라 - 시작하기" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs focus:outline-none focus:border-amber-400">
+                        </div>
+
+                        <!-- Dementor Field -->
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[11px] sm:text-xs font-semibold text-slate-300">
+                                    <i class="fa-solid fa-ghost text-purple-400"></i> 내 안의 디멘터 (스트레스)
+                                </label>
+                                <button type="button" onclick="togglePreset('dementor')" class="text-[10px] text-purple-400 hover:underline">
+                                    + 목록
+                                </button>
+                            </div>
+                            <div id="preset-dementor-list" class="hidden mb-2 p-1.5 bg-slate-900 rounded-lg border border-purple-500/30 flex flex-wrap gap-1">
+                                <!-- Populated JS -->
+                            </div>
+                            <input type="text" id="input-dementor" placeholder="예: 시험 피로감" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs focus:outline-none focus:border-amber-400">
+                        </div>
+
+                        <!-- Patronus Field -->
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[11px] sm:text-xs font-semibold text-slate-300">
+                                    <i class="fa-solid fa-horse-head text-cyan-400"></i> 패트로누스 (기쁨/감사)
+                                </label>
+                                <button type="button" onclick="togglePreset('patronus')" class="text-[10px] text-cyan-400 hover:underline">
+                                    + 목록
+                                </button>
+                            </div>
+                            <div id="preset-patronus-list" class="hidden mb-2 p-1.5 bg-slate-900 rounded-lg border border-cyan-500/30 flex flex-wrap gap-1">
+                                <!-- Populated JS -->
+                            </div>
+                            <input type="text" id="input-patronus" placeholder="예: 맛있는 저녁 식사" class="w-full bg-slate-900/80 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 text-xs focus:outline-none focus:border-amber-400">
+                        </div>
+                    </div>
+
+                    <!-- To-Do Section for Selected Date -->
+                    <div class="pt-2 sm:pt-3 border-t border-slate-700/60">
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex justify-between items-center">
+                            <span><i class="fa-solid fa-list-check text-amber-400"></i> 기숙사 미션 (투두)</span>
+                            <span class="text-[9px] sm:text-[10px] text-slate-400">완료 시 +10점</span>
+                        </label>
+
+                        <div class="flex gap-1 mb-2">
+                            <select id="todo-house-select" class="bg-slate-900 border border-slate-700 text-slate-200 text-[11px] sm:text-xs rounded-lg px-1 py-1">
+                                <option value="gryffindor">🦁 운동</option>
+                                <option value="ravenclaw">🦅 공부</option>
+                                <option value="hufflepuff">🦡 친절</option>
+                                <option value="slytherin">🐍 목표</option>
+                            </select>
+                            <input type="text" id="todo-input-text" placeholder="할 일..." class="flex-1 min-w-0 bg-slate-900/80 border border-slate-700 text-slate-200 text-xs rounded-lg px-2 py-1 focus:outline-none focus:border-amber-400">
+                            <button onclick="addTodo()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-2.5 py-1 rounded-lg text-xs transition shrink-0">
+                                추가
+                            </button>
+                        </div>
+
+                        <!-- Presets for Todos -->
+                        <div id="preset-todo-chips" class="flex flex-wrap gap-1 mb-2">
+                            <!-- Populated JS -->
+                        </div>
+
+                        <ul id="selected-date-todos" class="space-y-1 max-h-28 sm:max-h-32 overflow-y-auto pr-1 text-xs">
+                            <!-- Populated via JS -->
+                        </ul>
+                    </div>
+
+                    <!-- Action Buttons: Save & Delete/Cancel -->
+                    <div class="flex gap-2">
+                        <button onclick="saveDailyJournal()" class="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold py-2 sm:py-2.5 rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2 text-xs sm:text-sm">
+                            <i class="fa-solid fa-stamp"></i> 일기 저장
+                        </button>
+                        <button onclick="deleteDailyJournal()" class="bg-slate-800 hover:bg-red-950/60 hover:text-red-400 text-slate-400 border border-slate-700 hover:border-red-500/50 font-semibold px-3 py-2 sm:py-2.5 rounded-xl transition flex items-center justify-center gap-1 text-xs" title="해당 날짜 일기 삭제(취소)">
+                            <i class="fa-solid fa-trash-can"></i> 삭제
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Interactive Character Counseling (고민 상담소) -->
+                <div class="magical-card rounded-2xl p-3 sm:p-5 space-y-2.5 sm:space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
+                        <div class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-comments text-amber-400 text-base sm:text-lg"></i>
+                            <h3 class="font-bold text-amber-300 text-xs sm:text-sm magical-font">호그와트 캐릭터 상담소</h3>
+                        </div>
+                        <!-- Character Select dropdown (Excluded Newt Scamander) -->
+                        <select id="counselor-select" onchange="onCounselorChange()" class="bg-slate-900 border border-amber-500/40 text-amber-300 font-semibold text-[11px] sm:text-xs rounded-lg px-1.5 py-1 focus:outline-none max-w-[150px] sm:max-w-none">
+                            <option value="harry">🪄 해리 포터</option>
+                            <option value="hermione">📚 헤르미온느</option>
+                            <option value="dumbledore">🧙‍♂️ 덤블도어</option>
+                            <option value="snape">🧪 세베루스 스네이프</option>
+                            <option value="sirius">🐺 시리우스 블랙</option>
+                            <option value="dobby">🧦 도비</option>
+                            <option value="weasley_twins">🎆 프레드 & 조지</option>
+                            <option value="mcgonagall">🐈‍⬛ 맥고나걸 교수</option>
+                            <option value="lupin">🌕 리무스 루핀</option>
+                            <option value="ron">🍗 론 위즐리</option>
+                            <option value="voldemort">🐍 볼드모트 경</option>
+                        </select>
+                    </div>
+
+                    <!-- Chat Box -->
+                    <div id="chat-box" class="h-36 sm:h-44 overflow-y-auto space-y-2 pr-1 text-xs">
+                        <!-- Messages dynamically rendered -->
+                    </div>
+
+                    <!-- Chat Input -->
+                    <div class="flex gap-1.5">
+                        <input type="text" id="chat-input" onkeypress="handleChatKeyPress(event)" placeholder="고민을 나누어보세요..." class="flex-1 min-w-0 bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-amber-400">
+                        <button onclick="sendChatMessage()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs transition flex items-center gap-1 shrink-0">
+                            <span>전송</span>
+                            <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 bg-amber-500 text-slate-950 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl shadow-2xl font-bold text-xs flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span id="toast-msg">자동으로 기기에 저장되었습니다!</span>
+    </div>
+
+    <script>
+        // --- Data Definitions ---
+        const EMOTIONS = [
+            { id: 'patronum', name: '희망·에너지', label: '익스펙토 페트로눔', icon: '🔴', color: 'bg-red-950/40 border-red-700/60 text-red-300' },
+            { id: 'lumos', name: '깨달음·지혜', label: '루모스', icon: '🟢', color: 'bg-emerald-950/40 border-emerald-700/60 text-emerald-300' },
+            { id: 'felix', name: '자신감·행운', label: '펠릭스 펠리시스', icon: '🟡', color: 'bg-amber-950/40 border-amber-700/60 text-amber-300' },
+            { id: 'aguamenti', name: '평온·잔잔함', label: '아구아멘티', icon: '🔵', color: 'bg-blue-950/40 border-blue-700/60 text-blue-300' },
+            { id: 'dementor', name: '무기력·피로', label: '디멘터', icon: '🟣', color: 'bg-purple-950/40 border-purple-700/60 text-purple-300' },
+            { id: 'fiendfyre', name: '분노·스트레스', label: '악프로 화염', icon: '🟠', color: 'bg-orange-950/40 border-orange-700/60 text-orange-300' }
+        ];
+
+        const PRESET_SPELLS = [
+            "알로호모라 (막힌 시작점 열기)",
+            "익스펙토 페트로눔 (긍정적 생각 소환)",
+            "리디큘러스 (불안감을 유머로 소화)",
+            "아베스 (작은 소망들 마음껏 날리기)",
+            "루모스 (새로운 해결책 찾기)",
+            "프로테고 (지친 마음 스스로 보호하기)"
+        ];
+
+        const PRESET_DEMENTORS = [
+            "시험/과제 피로감",
+            "미루고 싶은 게으름",
+            "타인과의 비교로 생긴 불안",
+            "수면 부족과 몸의 무기력"
+        ];
+
+        const PRESET_PATRONUSES = [
+            "따뜻한 음료 한 잔의 여유",
+            "친구와의 기분 좋은 대화",
+            "좋아하는 음악 듣기",
+            "목표를 하나 완수한 성취감"
+        ];
+
+        const PRESET_TODOS = [
+            { house: 'gryffindor', text: '운동 30분 하기' },
+            { house: 'ravenclaw', text: '독서 20분 읽기' },
+            { house: 'hufflepuff', text: '친구에게 따뜻한 말 건네기' },
+            { house: 'slytherin', text: '오늘의 핵심 목표 완수하기' }
+        ];
+
+        const MONTHLY_THEMES = [
+            { title: "입학식 & 모자 분배", mission: "나의 핵심 가치를 정하고 올 한 해 목표 설정하기" },
+            { title: "첫 마법 주문 연습", mission: "작은 습관 매일 실천하기 (루모스)" },
+            { title: "비밀의 방 탐험", mission: "두려워하던 일을 하나 직면해보기" },
+            { title: "약초학 수업", mission: "꾸준한 정성으로 나만의 정원 돌보기" },
+            { title: "트라이위저드 시합", mission: "한계를 뛰어넘는 도전 완수하기" },
+            { title: "O.W.L. 시험 기간", mission: "상반기 성과 점검 및 피드백하기" },
+            { title: "여름 휴가 & 캠프", mission: "지친 마음에 완벽한 휴식 선물하기" },
+            { title: "다이애건 앨리 탐방", mission: "새로운 배움과 성장 도구 수집하기" },
+            { title: "급행열차 탑승", mission: "일상의 리듬과 몰입감 되찾기" },
+            { title: "어둠의 마법 방어술", mission: "나를 저하시키는 스트레스 요소 방어하기" },
+            { title: "퀴디치 경기", mission: "주변 사람들과 협력하고 감사 전하기" },
+            { title: "크리스마스 연회", mission: "한 해 동안의 성장을 다 함께 축하하기" }
+        ];
+
+        // Counselor Characters System Prompt (Excluded Newt Scamander)
+        const COUNSELOR_PROMPTS = {
+            harry: {
+                name: '해리 포터',
+                avatar: '🪄',
+                intro: '안녕! 난 해리야. 볼드모트나 디멘터를 상대하면서 두려움을 이겨낸 경험이 많지. 너의 어떤 고민이든 용기를 내서 솔직하게 들려줘!',
+                system: '너는 해리포터 소설의 주인공 해리 포터야. 친근하고 용기 있는 친구처럼 대답해줘. 호그와트 세계관 단어를 가끔 섞어 쓰고, 고민에 용기를 주는 조언을 짧고 따뜻하게 해줘.'
+            },
+            hermione: {
+                name: '헤르미온느 그레인저',
+                avatar: '📚',
+                intro: '반가워! 헤르미온느야. 도서관에서 답을 찾지 못할 문제는 없어. 차근차근 너의 상황을 분석해서 해결책을 찾아보자!',
+                system: '너는 헤르미온느 그레인저야. 명석하고 논리적이며 따뜻한 마음을 가졌어. 고민을 명확한 단계나 지혜로운 조언으로 나누어 다정하게 해결책을 제시해줘.'
+            },
+            dumbledore: {
+                name: '알버스 덤블도어',
+                avatar: '🧙‍♂️',
+                intro: '어서 오게나, 호그와트의 학생이여. 가장 어두운 순간에도 빛은 늘 존재하는 법이라네. 어떤 마음의 짐을 안고 있나?',
+                system: '너는 호그와트의 교장 알버스 덤블도이야. 지혜롭고 현명하며 온화한 말투(~게나, ~라네)를 써. 마법적 비유와 깊은 통찰력으로 마음에 위로와 깨달음을 줘.'
+            },
+            snape: {
+                name: '세베루스 스네이프',
+                avatar: '🧪',
+                intro: '마왕의 마법약 수업 시간인가? 징징거릴 시간 있으면 정신을 차리고 엄격하게 스스로를 돌아보아라... 하지만 무슨 문제지?',
+                system: '너는 세베루스 스네이프 교수야. 겉으로는 차갑고 무뚝뚝하며 츤데레적인 어조(~해보아라, 감상적이지 마라)를 사용하지만, 은근히 사용자가 마음을 다잡고 약점을 극복하도록 강건하게 뼈있는 조언을 해줘.'
+            },
+            sirius: {
+                name: '시리우스 블랙',
+                avatar: '🐺',
+                intro: '헤이! 아즈카반 감옥도 견뎌낸 나야. 세상의 규칙이나 답답한 일 때문에 힘들다면 자유롭게 툭 털어놓아봐!',
+                system: '너는 시리우스 블랙이야. 반항적이고 자유로우며 든든한 대부 같은 캐릭터야. 자신감과 용기를 불어넣고 세상을 두려워하지 말라고 힘차게 응원해줘.'
+            },
+            dobby: {
+                name: '도비',
+                avatar: '🧦',
+                intro: '자유로운 집요정 도비입니다! 도비는 친구를 돕는 것을 가장 좋아합니다! 어떤 고민이든 도비에게 말씀해주세요, 선생님!',
+                system: '너는 자유가 된 집요정 도비야. 극존칭(~입니다, ~선생님!)과 극도로 열정적이고 감격하는 어조를 써. 항상 사용자를 열렬히 응원하고 돕고 싶어해.'
+            },
+            weasley_twins: {
+                name: '프레드 & 조지',
+                avatar: '🎆',
+                intro: '장난 끝! 만일 스트레스나 걱정이 있다면 위즐리 형제의 장난감 가게식 유머로 날려버려 줄게! 신나게 말해봐!',
+                system: '너는 위즐리 가문의 장난꾸러기 쌍둥이 프레드와 조지야. 위트 있고 유쾌하며 재치 넘치는 장난스러운 말투로 무거운 고민을 가볍고 긍정적으로 바꿔줘.'
+            },
+            mcgonagall: {
+                name: '미네르바 맥고나걸',
+                avatar: '🐈‍⬛',
+                intro: '차 한 잔 마시겠니? 단호하고 절제된 태도가 필요할 때도 있지만, 네 고민을 경청할 준비는 항상 되어 있단다.',
+                system: '너는 맥고나걸 교수야. 엄격하지만 제자를 진심으로 아끼는 품위 있고 기품 있는 말투(~하려무나, 차 한 잔 하겠니)로 정확하고 똑부러진 가이드를 해줘.'
+            },
+            lupin: {
+                name: '리무스 루핀',
+                avatar: '🌕',
+                intro: '안녕! 어둠의 마법 방어술 교수였던 루핀이란다. 초콜릿 한 조각과 함께 마음속 불안감을 나누어보지 않겠니?',
+                system: '너는 리무스 루핀이야. 자상하고 친절한 교수님이자 멘토야. 사용자의 디멘터(스트레스)나 불안에 차분하게 공감해주고 마음을 달래줘.'
+            },
+            ron: {
+                name: '론 위즐리',
+                avatar: '🍗',
+                intro: '오, 안녕! 체스 경기나 거미 문제 빼고는 언제든 고민 들어줄 수 있어! 맛있는 걸 먹으면서 툭 털어놓아봐!',
+                system: '너는 론 위즐리야. 재치 있고 약간 유머러스하지만 친구를 진심으로 위해주는 충직한 캐릭터야. 솔직하고 재치있게 용기를 복돋아줘.'
+            },
+            voldemort: {
+                name: '볼드모트 경',
+                avatar: '🐍',
+                intro: '감히 나 어둠의 마왕을 부르다니... 미미한 머글의 고민 따위에 내가 관심을 줄 것 같은가? 말해보아라, 흥미롭다면 들어주지.',
+                system: '너는 볼드모트 경이야. 오만하고 카리스마 넘치는 어둠의 마왕 말투(~할 것인가, 사소하구나)를 쓰지만, 사용자가 약함을 극복하고 자신만의 힘과 야망을 기르도록 칠흑 같은 냉혹한 지혜를 줘.'
+            }
+        };
+
+        // State Management with LocalStorage Persistence
+        let selectedEmotion = 'patronum';
+        let logs = JSON.parse(localStorage.getItem('hogwarts_logs_v3') || '[]');
+        let todos = JSON.parse(localStorage.getItem('hogwarts_todos_v3') || '[]');
+        let houseScores = JSON.parse(localStorage.getItem('hogwarts_scores_v3') || '{"gryffindor": 0, "ravenclaw": 0, "hufflepuff": 0, "slytherin": 0}');
+        let chatHistory = JSON.parse(localStorage.getItem('hogwarts_chat_v3') || '{}');
+        let chartInstance = null;
+
+        let currentCalYear = new Date().getFullYear();
+        let currentCalMonth = new Date().getMonth();
+
+        // --- Init ---
+        window.onload = function() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('selected-date').value = todayStr;
+
+            renderEmotionStickerSelector();
+            renderPresetLists();
+            renderTodoListForSelectedDate();
+            renderCalendar();
+            updateHouseScoresDisplay();
+            initChart();
+            loadDateJournalData(todayStr);
+            initCounselorChat();
+        };
+
+        // Save all data persistently
+        function saveAllToLocalStorage() {
+            localStorage.setItem('hogwarts_logs_v3', JSON.stringify(logs));
+            localStorage.setItem('hogwarts_todos_v3', JSON.stringify(todos));
+            localStorage.setItem('hogwarts_scores_v3', JSON.stringify(houseScores));
+            localStorage.setItem('hogwarts_chat_v3', JSON.stringify(chatHistory));
+        }
+
+        // --- Preset Lists Render & Selection ---
+        function renderPresetLists() {
+            const spellBox = document.getElementById('preset-spell-list');
+            spellBox.innerHTML = PRESET_SPELLS.map(s => `
+                <button type="button" onclick="selectPreset('input-spell', '${s}')" class="bg-slate-800 hover:bg-slate-700 border border-amber-500/30 text-slate-200 text-[11px] px-2 py-0.5 rounded-md">
+                    ${s}
+                </button>
+            `).join('');
+
+            const dementorBox = document.getElementById('preset-dementor-list');
+            dementorBox.innerHTML = PRESET_DEMENTORS.map(d => `
+                <button type="button" onclick="selectPreset('input-dementor', '${d}')" class="bg-slate-800 hover:bg-slate-700 border border-purple-500/30 text-slate-200 text-[11px] px-2 py-0.5 rounded-md">
+                    ${d}
+                </button>
+            `).join('');
+
+            const patronusBox = document.getElementById('preset-patronus-list');
+            patronusBox.innerHTML = PRESET_PATRONUSES.map(p => `
+                <button type="button" onclick="selectPreset('input-patronus', '${p}')" class="bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 text-slate-200 text-[11px] px-2 py-0.5 rounded-md">
+                    ${p}
+                </button>
+            `).join('');
+
+            const todoChips = document.getElementById('preset-todo-chips');
+            todoChips.innerHTML = PRESET_TODOS.map(t => `
+                <button type="button" onclick="addPresetTodo('${t.house}', '${t.text}')" class="bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[10px] px-2 py-1 rounded-lg flex items-center gap-1">
+                    <span>+</span> ${t.text}
+                </button>
+            `).join('');
+        }
+
+        function togglePreset(type) {
+            const el = document.getElementById(`preset-${type}-list`);
+            el.classList.toggle('hidden');
+        }
+
+        function selectPreset(inputId, value) {
+            document.getElementById(inputId).value = value;
+            showToast("선택한 항목이 입력되었습니다.");
+        }
+
+        function addPresetTodo(house, text) {
+            const dateStr = document.getElementById('selected-date').value;
+            const newTodo = {
+                id: Date.now(),
+                date: dateStr,
+                house,
+                text,
+                completed: false
+            };
+
+            todos.push(newTodo);
+            saveAllToLocalStorage();
+            renderTodoListForSelectedDate();
+            renderCalendar();
+            showToast("추천 미션이 등록되었습니다!");
+        }
+
+        // --- Calendar Rendering & Sticker Display ---
+        function changeMonth(delta) {
+            currentCalMonth += delta;
+            if (currentCalMonth < 0) {
+                currentCalMonth = 11;
+                currentCalYear--;
+            } else if (currentCalMonth > 11) {
+                currentCalMonth = 0;
+                currentCalYear++;
+            }
+            renderCalendar();
+            updateChart();
+        }
+
+        function renderCalendar() {
+            const monthDisplay = document.getElementById('calendar-month-year');
+            const banner = document.getElementById('monthly-theme-banner');
+            const grid = document.getElementById('calendar-grid');
+
+            const monthTheme = MONTHLY_THEMES[currentCalMonth];
+            monthDisplay.innerText = `${currentCalYear}년 ${currentCalMonth + 1}월`;
+
+            banner.innerHTML = `
+                <div class="flex items-center justify-between font-bold text-amber-300 text-[11px] sm:text-xs">
+                    <span><i class="fa-solid fa-compass text-amber-400"></i> ${currentCalMonth + 1}월 테마: ${monthTheme.title}</span>
+                </div>
+                <div class="text-slate-300 mt-0.5 text-[10px] sm:text-[11px] leading-tight">
+                    <span class="text-amber-400 font-medium">목표:</span> ${monthTheme.mission}
+                </div>
+            `;
+
+            grid.innerHTML = '';
+
+            const firstDay = new Date(currentCalYear, currentCalMonth, 1).getDay();
+            const daysInMonth = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
+            const selectedDateVal = document.getElementById('selected-date').value;
+
+            for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += `<div class="h-12 sm:h-20 bg-slate-950/20 rounded-xl border border-slate-900/30"></div>`;
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${currentCalYear}-${String(currentCalMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const log = logs.find(l => l.date === dateStr);
+                const dayTodos = todos.filter(t => t.date === dateStr && t.completed);
+                const isSelected = dateStr === selectedDateVal;
+
+                let stickersHtml = '';
+                
+                // Emotion Sticker
+                if (log && log.emotion) {
+                    stickersHtml += `
+                        <div class="sticker-badge bg-slate-900/90 border border-amber-500/40 rounded-full px-1 py-0.5 text-[9px] sm:text-[10px] flex items-center gap-0.5 shadow">
+                            <span>${log.emotion.icon}</span>
+                            <span class="truncate max-w-[32px] sm:max-w-[38px] text-slate-200 text-[8px] font-medium hidden sm:inline">${log.emotion.name}</span>
+                        </div>
+                    `;
+                }
+
+                // Todo Stickers
+                if (dayTodos.length > 0) {
+                    const houseIcons = { gryffindor: '🦁', ravenclaw: '🦅', hufflepuff: '🦡', slytherin: '🐍' };
+                    stickersHtml += `
+                        <div class="sticker-badge flex gap-0.5 bg-slate-950/80 px-0.5 sm:px-1 py-0.5 rounded-md border border-slate-700/60 mt-0.5">
+                            ${dayTodos.slice(0, 2).map(t => `<span class="text-[8px] sm:text-[9px]">${houseIcons[t.house]}</span>`).join('')}
+                            ${dayTodos.length > 2 ? `<span class="text-[7px] text-amber-400 font-bold">+${dayTodos.length - 2}</span>` : ''}
+                        </div>
+                    `;
+                }
+
+                grid.innerHTML += `
+                    <div onclick="selectCalendarDate('${dateStr}')" class="h-12 sm:h-20 p-1 sm:p-1.5 rounded-xl border ${isSelected ? 'border-amber-400 bg-amber-500/10' : 'border-slate-800 bg-slate-800/40 hover:bg-slate-800/80'} transition cursor-pointer flex flex-col justify-between overflow-hidden">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-[9px] sm:text-[11px] ${isSelected ? 'text-amber-400 gold-glow' : 'text-slate-400'}">${day}</span>
+                            ${log ? '<i class="fa-solid fa-bookmark text-[7px] sm:text-[8px] text-amber-400"></i>' : ''}
+                        </div>
+                        <div class="flex flex-col items-center justify-center flex-1 space-y-0.5">
+                            ${stickersHtml}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function selectCalendarDate(dateStr) {
+            document.getElementById('selected-date').value = dateStr;
+            loadDateJournalData(dateStr);
+            renderCalendar();
+        }
+
+        function onDateSelectedChange() {
+            const dateStr = document.getElementById('selected-date').value;
+            loadDateJournalData(dateStr);
+            renderCalendar();
+        }
+
+        function loadDateJournalData(dateStr) {
+            const log = logs.find(l => l.date === dateStr);
+            if (log) {
+                selectEmotionSticker(log.emotion.id);
+                document.getElementById('input-spell').value = log.spell || '';
+                document.getElementById('input-dementor').value = log.dementor || '';
+                document.getElementById('input-patronus').value = log.patronus || '';
+            } else {
+                selectEmotionSticker('patronum');
+                document.getElementById('input-spell').value = '';
+                document.getElementById('input-dementor').value = '';
+                document.getElementById('input-patronus').value = '';
+            }
+            renderTodoListForSelectedDate();
+        }
+
+        // --- Emotion Selector ---
+        function renderEmotionStickerSelector() {
+            const container = document.getElementById('emotion-sticker-selector');
+            container.innerHTML = EMOTIONS.map(e => `
+                <button type="button" onclick="selectEmotionSticker('${e.id}')" class="p-1.5 sm:p-2 rounded-xl border text-left transition flex items-center gap-1.5 ${e.color} ${selectedEmotion === e.id ? 'ring-2 ring-amber-400 scale-[1.02]' : 'opacity-70 hover:opacity-100'}">
+                    <span class="text-sm sm:text-base">${e.icon}</span>
+                    <div class="truncate min-w-0">
+                        <div class="font-bold text-[10px] sm:text-[11px] leading-tight truncate">${e.name}</div>
+                        <div class="text-[8px] sm:text-[9px] opacity-80 truncate hidden sm:block">${e.label}</div>
+                    </div>
+                </button>
+            `).join('');
+        }
+
+        function selectEmotionSticker(emoId) {
+            selectedEmotion = emoId;
+            renderEmotionStickerSelector();
+        }
+
+        // --- Save Daily Journal ---
+        function saveDailyJournal() {
+            const date = document.getElementById('selected-date').value;
+            if (!date) {
+                showToast("날짜를 선택해 주세요!");
+                return;
+            }
+
+            const spell = document.getElementById('input-spell').value.trim();
+            const dementor = document.getElementById('input-dementor').value.trim();
+            const patronus = document.getElementById('input-patronus').value.trim();
+            const emoObj = EMOTIONS.find(e => e.id === selectedEmotion);
+
+            const existingIdx = logs.findIndex(l => l.date === date);
+            const entry = {
+                id: Date.now(),
+                date,
+                emotion: emoObj,
+                spell,
+                dementor,
+                patronus
+            };
+
+            if (existingIdx >= 0) {
+                logs[existingIdx] = entry;
+            } else {
+                logs.push(entry);
+            }
+
+            saveAllToLocalStorage();
+            renderCalendar();
+            updateChart();
+            showToast(`${date} 기기에 저장되었습니다!`);
+        }
+
+        // --- Delete / Cancel Daily Journal ---
+        function deleteDailyJournal() {
+            const date = document.getElementById('selected-date').value;
+            const logIdx = logs.findIndex(l => l.date === date);
+
+            if (logIdx === -1) {
+                showToast("삭제할 일기 기록이 없습니다.");
+                return;
+            }
+
+            logs.splice(logIdx, 1);
+            saveAllToLocalStorage();
+
+            // Clear inputs
+            document.getElementById('input-spell').value = '';
+            document.getElementById('input-dementor').value = '';
+            document.getElementById('input-patronus').value = '';
+            selectEmotionSticker('patronum');
+
+            renderCalendar();
+            updateChart();
+            showToast(`${date} 일기가 삭제(취소)되었습니다.`);
+        }
+
+        // --- Integrated To-Do List ---
+        function renderTodoListForSelectedDate() {
+            const dateStr = document.getElementById('selected-date').value;
+            const container = document.getElementById('selected-date-todos');
+            const dateTodos = todos.filter(t => t.date === dateStr);
+
+            if (dateTodos.length === 0) {
+                container.innerHTML = `<li class="text-slate-500 text-[11px] italic py-1 text-center">등록된 기숙사 미션이 없습니다.</li>`;
+                return;
+            }
+
+            const houseBadge = {
+                gryffindor: '🦁', ravenclaw: '🦅', hufflepuff: '🦡', slytherin: '🐍'
+            };
+
+            container.innerHTML = dateTodos.map(todo => `
+                <li class="flex items-center justify-between bg-slate-900/80 p-1.5 rounded-lg border border-slate-700/60">
+                    <label class="flex items-center gap-2 cursor-pointer flex-1 min-w-0 pr-2">
+                        <input type="checkbox" ${todo.completed ? 'checked' : ''} onchange="toggleTodo(${todo.id})" class="accent-amber-400 w-3.5 h-3.5 rounded">
+                        <span class="text-[10px]">${houseBadge[todo.house]}</span>
+                        <span class="text-xs ${todo.completed ? 'line-through text-slate-500' : 'text-slate-200'} truncate">${escapeHtml(todo.text)}</span>
+                    </label>
+                    <button onclick="deleteTodo(${todo.id})" class="text-slate-500 hover:text-red-400 text-xs px-1" title="미션 취소/삭제"><i class="fa-solid fa-xmark"></i></button>
+                </li>
+            `).join('');
+        }
+
+        function addTodo() {
+            const dateStr = document.getElementById('selected-date').value;
+            const house = document.getElementById('todo-house-select').value;
+            const input = document.getElementById('todo-input-text');
+            const text = input.value.trim();
+
+            if (!text) {
+                showToast("할 일을 입력해주세요!");
+                return;
+            }
+
+            const newTodo = {
+                id: Date.now(),
+                date: dateStr,
+                house,
+                text,
+                completed: false
+            };
+
+            todos.push(newTodo);
+            saveAllToLocalStorage();
+            input.value = '';
+            renderTodoListForSelectedDate();
+            renderCalendar();
+            showToast("미션이 등록되었습니다.");
+        }
+
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (!todo) return;
+
+            todo.completed = !todo.completed;
+            if (todo.completed) {
+                addHousePoints(10, todo.house);
+            } else {
+                addHousePoints(-10, todo.house);
+            }
+
+            saveAllToLocalStorage();
+            renderTodoListForSelectedDate();
+            renderCalendar();
+        }
+
+        function deleteTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo && todo.completed) {
+                addHousePoints(-10, todo.house);
+            }
+            todos = todos.filter(t => t.id !== id);
+            saveAllToLocalStorage();
+            renderTodoListForSelectedDate();
+            renderCalendar();
+            showToast("미션이 삭제되었습니다.");
+        }
+
+        // --- House Scores ---
+        function addHousePoints(pts, house) {
+            houseScores[house] = Math.max(0, (houseScores[house] || 0) + pts);
+            saveAllToLocalStorage();
+            updateHouseScoresDisplay();
+        }
+
+        function updateHouseScoresDisplay() {
+            document.getElementById('score-gryffindor').innerText = (houseScores.gryffindor || 0) + '점';
+            document.getElementById('score-ravenclaw').innerText = (houseScores.ravenclaw || 0) + '점';
+            document.getElementById('score-hufflepuff').innerText = (houseScores.hufflepuff || 0) + '점';
+            document.getElementById('score-slytherin').innerText = (houseScores.slytherin || 0) + '점';
+        }
+
+        // --- Interactive Character Chat System (고민 상담) ---
+        function initCounselorChat() {
+            const counselorKey = document.getElementById('counselor-select').value;
+            if (!chatHistory[counselorKey]) {
+                const counselor = COUNSELOR_PROMPTS[counselorKey];
+                chatHistory[counselorKey] = [
+                    { role: 'character', text: counselor.intro }
+                ];
+                saveAllToLocalStorage();
+            }
+            renderChatMessages();
+        }
+
+        function onCounselorChange() {
+            initCounselorChat();
+        }
+
+        function renderChatMessages() {
+            const counselorKey = document.getElementById('counselor-select').value;
+            const chatBox = document.getElementById('chat-box');
+            const messages = chatHistory[counselorKey] || [];
+            const counselor = COUNSELOR_PROMPTS[counselorKey];
+
+            chatBox.innerHTML = messages.map(msg => {
+                if (msg.role === 'user') {
+                    return `
+                        <div class="flex justify-end">
+                            <div class="chat-bubble-user max-w-[80%] p-2.5 text-amber-100 text-xs shadow">
+                                ${escapeHtml(msg.text)}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="flex justify-start gap-2 items-start">
+                            <div class="text-base bg-slate-800 p-1 rounded-full border border-slate-700">${counselor.avatar}</div>
+                            <div class="chat-bubble-character max-w-[80%] p-2.5 text-slate-200 text-xs shadow">
+                                <div class="font-bold text-amber-300 text-[10px] mb-0.5">${counselor.name}</div>
+                                <div>${escapeHtml(msg.text)}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleChatKeyPress(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const counselorKey = document.getElementById('counselor-select').value;
+            const counselor = COUNSELOR_PROMPTS[counselorKey];
+
+            // 1. Add User Message
+            if (!chatHistory[counselorKey]) chatHistory[counselorKey] = [];
+            chatHistory[counselorKey].push({ role: 'user', text });
+            input.value = '';
+            renderChatMessages();
+
+            // Loading indicator
+            const chatBox = document.getElementById('chat-box');
+            const loadingId = 'loading-' + Date.now();
+            chatBox.innerHTML += `
+                <div id="${loadingId}" class="flex justify-start gap-2 items-start">
+                    <div class="text-base bg-slate-800 p-1 rounded-full border border-slate-700">${counselor.avatar}</div>
+                    <div class="chat-bubble-character p-2.5 text-slate-400 text-xs italic">
+                        생각 중... <i class="fa-solid fa-wand-sparkles animate-spin text-amber-400"></i>
+                    </div>
+                </div>
+            `;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 2. Call Gemini API for Character Response
+            try {
+                const systemPrompt = counselor.system;
+                const userQuery = `사용자의 현재 고민: "${text}"`;
+                
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=`;
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] }
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const replyText = result.candidates?.[0]?.content?.parts?.[0]?.text || "아, 지금은 마법 전파가 고르지 못하구나. 잠시 후 다시 고민을 들려다오!";
+
+                // Remove loading
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+
+                chatHistory[counselorKey].push({ role: 'character', text: replyText });
+                saveAllToLocalStorage();
+                renderChatMessages();
+
+            } catch (err) {
+                console.error(err);
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+
+                chatHistory[counselorKey].push({
+                    role: 'character',
+                    text: `(따뜻한 초콜릿을 건네며) 조금 전에는 마법이 얽혔지만, 네 이야기를 항상 진심으로 듣고 있단다. 조금 뒤에 다시 이야기를 나눠볼까?`
+                });
+                saveAllToLocalStorage();
+                renderChatMessages();
+            }
+        }
+
+        // --- Chart.js ---
+        function initChart() {
+            const canvas = document.getElementById('emotionChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: getChartData(),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { color: '#cbd5e1', font: { family: 'Noto Sans KR', size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function getChartData() {
+            const counts = {};
+            EMOTIONS.forEach(e => counts[e.name] = 0);
+
+            const currentMonthLogs = logs.filter(l => {
+                const d = new Date(l.date);
+                return d.getFullYear() === currentCalYear && d.getMonth() === currentCalMonth;
+            });
+
+            currentMonthLogs.forEach(l => {
+                if (l.emotion && l.emotion.name) {
+                    counts[l.emotion.name] = (counts[l.emotion.name] || 0) + 1;
+                }
+            });
+
+            return {
+                labels: EMOTIONS.map(e => e.name),
+                datasets: [{
+                    data: EMOTIONS.map(e => counts[e.name]),
+                    backgroundColor: ['#ef4444', '#10b981', '#f59e0b', '#3b82f6', '#a855f7', '#f97316'],
+                    borderWidth: 0
+                }]
+            };
+        }
+
+        function updateChart() {
+            if (chartInstance) {
+                chartInstance.data = getChartData();
+                chartInstance.update();
+            }
+        }
+
+        // --- Helpers ---
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
