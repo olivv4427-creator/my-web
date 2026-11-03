@@ -2,342 +2,513 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>수해나에서 살아남기</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-        body {
-            font-family: 'Pretendard', sans-serif;
+        * {
             user-select: none;
             -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #0b0f19;
+            color: #f8fafc;
+            overflow-x: hidden;
             touch-action: manipulation;
-            background-color: #0b0f17;
         }
-        .phone-frame {
-            width: 100%;
-            max-width: 430px;
-            margin: 0 auto;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .canvas-container {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 4 / 3;
-            margin: 0 auto;
-        }
+        .font-jua { font-family: 'Jua', sans-serif; }
         .touch-active:active {
             transform: scale(0.96);
-            filter: brightness(1.1);
+            filter: brightness(0.9);
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(0.98); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 2s infinite ease-in-out;
         }
     </style>
 </head>
-<body class="text-white flex items-center justify-center p-0 md:p-4">
+<body class="flex flex-col items-center justify-center min-h-[100dvh] bg-slate-950 p-2 sm:p-4">
 
-    <!-- 메인 프레임 -->
-    <div class="phone-frame bg-slate-900 border-x border-slate-800 shadow-2xl p-4 flex flex-col">
-
-        <!-- 메인 화면 -->
-        <div id="screen-main" class="flex-1 flex flex-col justify-between items-center py-6 text-center">
-            <div class="w-full flex flex-col items-center space-y-4 my-auto">
-                <!-- 수해나 로고 (SVG/HTML 카드) -->
-                <div class="w-full bg-white rounded-2xl p-5 flex flex-col items-center justify-center shadow-lg border-2 border-slate-200">
-                    <span class="text-xs text-neutral-600 font-extrabold tracking-widest mb-1">수학을 <span class="text-red-500">·</span>빛나게 하는곳</span>
-                    <div class="flex items-center space-x-1.5 text-black font-black text-5xl tracking-tighter my-1">
-                        <span>수</span>
-                        <span>해</span>
-                        <span>나</span>
+    <!-- 메인 컨테이너 (모바일 비율 최적화) -->
+    <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[92vh] max-h-[850px] relative">
+        
+        <!-- [1] 메인 화면 / 타이틀 Screen -->
+        <div id="screen-main" class="flex flex-col items-center justify-between h-full p-6 text-center z-10 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950">
+            <div class="w-full flex flex-col items-center pt-4">
+                <!-- 복구 및 정돈된 수해나 로고 카드 -->
+                <div class="w-full max-w-[280px] bg-white rounded-2xl p-4 shadow-xl border-2 border-amber-400/50 mb-6 flex flex-col items-center justify-center space-y-1">
+                    <p class="text-[11px] font-bold text-slate-600 tracking-wider flex items-center mb-1">
+                        수학을 <span class="inline-block w-1.5 h-1.5 bg-red-500 rounded-full mx-1"></span> 빛나게 하는곳
+                    </p>
+                    <div class="flex items-baseline justify-center space-x-1">
+                        <span class="text-4xl font-black text-slate-950 tracking-tighter font-jua">수해나</span>
+                        <span class="text-sm font-bold text-red-700 tracking-widest font-jua">수학학원</span>
                     </div>
-                    <span class="text-xs text-red-900 font-black tracking-widest mt-1">수 학 학 원</span>
                 </div>
 
-                <div class="space-y-1">
-                    <h1 class="text-2xl font-black text-yellow-400 drop-shadow">수해나에서 살아남기</h1>
-                    <p class="text-slate-400 text-xs">수해나 수학학원 스릴 넘치는 생존 게임</p>
+                <h1 class="text-3xl font-jua text-amber-400 drop-shadow-md mb-2">수해나에서 살아남기</h1>
+                <p class="text-xs text-slate-400 px-4">
+                    선생님들의 눈을 피해 떠들고, 채점을 통과하여 무사히 정시 하원에 성공하라!
+                </p>
+            </div>
+
+            <!-- 메인 가이드 캐릭터 가시화 -->
+            <div class="my-auto py-2 flex flex-col items-center">
+                <div class="w-24 h-24 bg-slate-800 rounded-full border-4 border-amber-500/30 flex items-center justify-center text-5xl shadow-inner relative animate-bounce">
+                    🏫
+                    <span class="absolute -top-1 -right-1 text-lg">📝</span>
                 </div>
             </div>
 
-            <div class="w-full space-y-3 mb-4">
-                <button onclick="startGame()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 font-black text-lg rounded-2xl shadow-xl transition transform touch-active flex items-center justify-center space-x-2">
+            <!-- 하단 시작 버튼 -->
+            <div class="w-full space-y-3 pb-2">
+                <button onclick="startGame()" class="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-lg rounded-2xl shadow-lg transition transform touch-active border border-amber-300/40 flex items-center justify-center space-x-2">
                     <span>🚀 학원 등원하기</span>
                 </button>
-                <button onclick="openRulesModal()" class="w-full py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm rounded-2xl border border-slate-700 transition touch-active">
+                <button onclick="openRulesModal()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm rounded-xl transition border border-slate-700">
                     📖 게임 설명 / 규칙
                 </button>
             </div>
         </div>
 
-        <!-- 규칙 모달 -->
-        <div id="modal-rules" class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 max-w-xs w-full space-y-4 max-h-[85vh] overflow-y-auto shadow-2xl">
-                <h2 class="text-lg font-black text-yellow-400 flex justify-between items-center border-b border-slate-700 pb-2">
-                    <span>📖 학원 규칙 가이드</span>
-                    <button onclick="closeRulesModal()" class="text-slate-400 hover:text-white p-1">✕</button>
-                </h2>
-                <div class="text-xs text-slate-300 space-y-3 leading-relaxed">
-                    <p><strong class="text-emerald-400">1. 확인학습 (18:00~19:30):</strong> 랩실에서 친구들과 수다를 떨 수 있습니다. 쌤들이 랩실 안으로 완전히 들어왔을 때 떠들면 불이익(정답률 차감 및 자리 이동)이 발생합니다!</p>
-                    <p><strong class="text-cyan-400">2. 복도 & 발자국:</strong> 70% 확률로 "뚜벅..." 발자국 소리가 나며 복도는 50% 확률로 개방됩니다.</p>
-                    <p><strong class="text-purple-400">3. 쌤별 특징 & 대사:</strong>
-                        <br>• 부원장쌤: 게이지 대폭 변화 / "떠들지 마라!" (자리 이동)
-                        <br>• 2강쌤: 게이지 중간 유지 / "몸이 좀 돌아가 있는 것 같은데"
-                        <br>• 실장쌤: 게이지 변화 거의 없음 / 대사 없이 순찰
-                        <br>• 4강/5강쌤: 게이지 중상 유지 / "떠들지 마세요" or "부원장님!"
-                        <br>• 데스크쌤: 변화 없음 / "어 조용히 해 주세요"
-                    </p>
-                    <p><strong class="text-amber-400">4. 전화 연출:</strong> 랩실 밖 데스크쌤의 "오늘 못 온답니다" 연출 후 쌤들의 분노 상승!</p>
-                    <p><strong class="text-pink-400">5. 채점 & 본수업 (19:30~21:00):</strong> 타이밍 바 정답률 60% 초과 필수! 부원장쌤 레이더를 피해 졸기. (3회 경고 시 남아서 공부!)</p>
+        <!-- [2] 게임 메인 플레이 스크린 -->
+        <div id="screen-game" class="hidden flex-col h-full bg-slate-950 relative">
+            
+            <!-- 상단 바: 스테이지, 시간 & 정답률 표시 -->
+            <div class="w-full bg-slate-900 border-b border-slate-800 p-3 flex items-center justify-between z-20 shadow-md">
+                <div class="flex items-center space-x-2">
+                    <span id="stage-badge" class="px-2.5 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold rounded-lg">
+                        1단계: 확인학습 (랩실)
+                    </span>
+                    <span id="time-display" class="px-2 py-1 bg-slate-800 text-rose-400 border border-slate-700 text-xs font-black rounded-lg flex items-center space-x-1">
+                        <span>⏰</span> <span id="clock-text">18:00</span>
+                    </span>
                 </div>
-                <button onclick="closeRulesModal()" class="w-full py-3 bg-emerald-500 font-bold rounded-xl text-white text-sm touch-active">알겠습니다</button>
-            </div>
-        </div>
-
-        <!-- 게임 진행 화면 -->
-        <div id="screen-game" class="hidden flex-1 flex flex-col justify-between space-y-3">
-            <!-- 상단 상태 바 -->
-            <div class="w-full bg-slate-800/90 backdrop-blur border border-slate-700/80 rounded-xl p-2.5 flex justify-between items-center text-xs">
-                <div class="flex items-center space-x-1">
-                    <span class="text-slate-400">🕒</span>
-                    <span id="game-timer" class="font-mono font-black text-yellow-400 text-sm">18:00</span>
-                </div>
-                <div class="flex items-center space-x-1">
-                    <span id="stage-text" class="font-bold text-emerald-400">확인학습</span>
-                </div>
-                <div class="flex items-center space-x-1">
-                    <span class="text-slate-400">정답률:</span>
-                    <span id="accuracy-display" class="font-mono font-black text-cyan-400 text-sm">100%</span>
+                <div class="flex items-center space-x-1.5 bg-slate-800 px-3 py-1 rounded-xl border border-slate-700">
+                    <span class="text-xs text-slate-400">정답률</span>
+                    <span id="accuracy-display" class="text-sm font-black text-amber-400">100%</span>
                 </div>
             </div>
 
-            <!-- Canvas Area -->
-            <div id="canvas-area" class="canvas-container bg-slate-950 rounded-2xl overflow-hidden border-2 border-slate-700/80 shadow-2xl relative">
-                <canvas id="gameCanvas" width="400" height="300" class="w-full h-full block"></canvas>
-            </div>
-
-            <!-- 하단 선생님 분노 게이지 패널 -->
-            <div id="rage-panel" class="w-full bg-slate-800/80 border border-slate-700/70 rounded-xl p-2 grid grid-cols-6 gap-1.5 text-center text-[10px]">
-                <div class="flex flex-col items-center">
-                    <span class="font-bold text-red-400 mb-0.5">부원장</span>
-                    <div class="w-full bg-slate-950 h-9 rounded-full overflow-hidden flex flex-col justify-end p-0.5 border border-slate-800">
-                        <div id="rage-bar-principal" class="bg-red-500 w-full rounded-full transition-all duration-300" style="height: 20%;"></div>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center">
-                    <span class="font-bold text-orange-400 mb-0.5">2강쌤</span>
-                    <div class="w-full bg-slate-950 h-9 rounded-full overflow-hidden flex flex-col justify-end p-0.5 border border-slate-800">
-                        <div id="rage-bar-class2" class="bg-orange-500 w-full rounded-full transition-all duration-300" style="height: 40%;"></div>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center">
-                    <span class="font-bold text-blue-400 mb-0.5">실장쌤</span>
-                    <div class="w-full bg-slate-950 h-9 rounded-full overflow-hidden flex flex-col justify-end p-0.5 border border-slate-800">
-                        <div id="rage-bar-manager" class="bg-blue-500 w-full rounded-full transition-all duration-300" style="height: 5%;"></div>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center">
-                    <span class="font-bold text-purple-400 mb-0.5">4강쌤</span>
-                    <div class="w-full bg-slate-950 h-9 rounded-full overflow-hidden flex flex-col justify-end p-0.5 border border-slate-800">
-                        <div id="rage-bar-class4" class="bg-purple-500 w-full rounded-full transition-all duration-300" style="height: 65%;"></div>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center">
-                    <span class="font-bold text-pink-400 mb-0.5">5강쌤</span>
-                    <div class="w-full bg-slate-950 h-9 rounded-full overflow-hidden flex flex-col justify-end p-0.5 border border-slate-800">
-                        <div id="rage-bar-class5" class="bg-pink-500 w-full rounded-full transition-all duration-300" style="height: 70%;"></div>
-                    </div>
-                </div>
-                <div class="flex flex-col items-center">
-                    <span class="font-bold text-cyan-400 mb-0.5">데스크</span>
-                    <div class="w-full bg-slate-950 h-9 rounded-full overflow-hidden flex flex-col justify-end p-0.5 border border-slate-800">
-                        <div id="rage-bar-desk" class="bg-cyan-500 w-full rounded-full transition-all duration-300" style="height: 0%;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 채점 전용 UI -->
-            <div id="screen-grading" class="hidden w-full bg-slate-800 border border-slate-700 rounded-2xl p-4 text-center space-y-3">
-                <div class="flex items-center justify-center space-x-2">
-                    <div id="grading-teacher-badge" class="w-8 h-8 rounded-full flex items-center justify-center font-black text-xs text-white shadow">
-                        쌤
-                    </div>
-                    <h3 id="grading-room-title" class="text-base font-bold text-yellow-400">1강 채점실</h3>
-                </div>
-                <p id="grading-teacher-title" class="text-slate-300 text-xs">선생님 채점 진행 중</p>
+            <!-- 메인 게임 캔버스 영역 -->
+            <div class="relative w-full flex-1 bg-slate-950 flex flex-col items-center justify-center overflow-hidden">
                 
-                <div id="grading-speech-bubble" class="hidden bg-slate-900 border border-yellow-500/50 text-yellow-300 p-2.5 rounded-xl text-xs font-bold shadow-inner">
-                    ...
-                </div>
+                <!-- [스테이지 1] 랩실 Canvas (확인학습) -->
+                <canvas id="labCanvas" width="360" height="300" class="w-full h-full object-contain bg-slate-950"></canvas>
 
-                <div id="music-notes" class="hidden text-pink-400 animate-pulse text-sm font-bold">
-                    🎵 🎶 🎵 🎶
-                </div>
+                <!-- [스테이지 2] 본수업 회전 레이더 Radar Canvas -->
+                <canvas id="classCanvas" width="360" height="300" class="hidden w-full h-full object-contain bg-slate-950"></canvas>
 
-                <!-- 빠른 타이밍 바 -->
-                <div class="relative w-full h-8 bg-slate-950 rounded-full border-2 border-slate-700 overflow-hidden my-2">
-                    <div class="absolute left-1/3 w-1/3 h-full bg-emerald-500/30 border-x-2 border-emerald-400 flex items-center justify-center text-[10px] text-emerald-300 font-bold">
-                        PERFECT
+                <!-- [미니게임] 타이점 채점 미니게임 팝업 Overlay -->
+                <div id="overlay-grading" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-4">
+                    <div class="w-full bg-slate-900 border border-amber-500/30 rounded-2xl p-4 shadow-2xl flex flex-col items-center text-center space-y-4">
+                        <div class="flex items-center space-x-2">
+                            <span id="grading-teacher-icon" class="w-8 h-8 rounded-full bg-amber-500 text-slate-950 font-bold flex items-center justify-center text-sm">3</span>
+                            <h3 id="grading-teacher-title" class="text-base font-bold text-amber-400">실장쌤 채점 대기 중</h3>
+                        </div>
+
+                        <!-- 말풍선 영역 -->
+                        <div id="grading-speech-bubble" class="hidden bg-white text-slate-900 px-3 py-1.5 rounded-2xl text-xs font-bold relative shadow-md">
+                            언니 와 이래 많이 틀렸노
+                        </div>
+
+                        <!-- 빠르게 왕복하는 타이밍 게이지 바 -->
+                        <div class="w-full h-8 bg-slate-800 rounded-full p-1 relative overflow-hidden border border-slate-700">
+                            <!-- 중앙 골든 존 (PERFECT) -->
+                            <div class="absolute top-1 bottom-1 left-1/3 right-1/3 bg-emerald-500/30 border-x-2 border-emerald-400 rounded-sm flex items-center justify-center">
+                                <span class="text-[10px] text-emerald-300 font-bold tracking-tighter">PERFECT</span>
+                            </div>
+                            <!-- 좌우로 왕복하는 붉은 바 / 코인 -->
+                            <div id="coin-bar" class="absolute top-1 bottom-1 w-4 bg-amber-400 rounded-md shadow-md border border-white transition-none" style="left: 0%;"></div>
+                        </div>
+
+                        <button id="btn-grading-stop" onclick="stopCoin()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black text-base rounded-xl shadow-lg transition transform touch-active">
+                            🎯 채점 타이밍 정지!
+                        </button>
+                        <p id="grading-result" class="text-xs text-slate-400 min-h-[18px] font-bold"></p>
                     </div>
-                    <div id="coin" class="absolute top-0.5 bottom-0.5 w-7 bg-yellow-400 rounded-full shadow-lg flex items-center justify-center font-black text-slate-900 text-xs">
-                        🪙
-                    </div>
                 </div>
 
-                <button onclick="stopCoin()" class="w-full py-3.5 bg-yellow-500 active:bg-yellow-600 text-slate-950 font-black text-base rounded-xl shadow-lg transition touch-active">
-                    🎯 정답률 맞추기!
-                </button>
-                <div id="grading-result" class="text-xs font-bold h-5"></div>
             </div>
 
-            <!-- 하단 컨트롤 버튼 영역 -->
-            <div id="action-controls" class="w-full pt-1">
-                <button id="btn-talk" class="w-full py-4 bg-gradient-to-r from-rose-500 to-red-600 text-white font-black text-lg rounded-2xl shadow-xl transition transform touch-active select-none border border-rose-400/30 flex items-center justify-center space-x-2">
-                    <span>🗣️ 친구들과 수다 떨기 (꾹 누르기!)</span>
-                </button>
-                <button id="btn-sleep" class="hidden w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-lg rounded-2xl shadow-xl transition transform touch-active select-none border border-indigo-400/30 flex items-center justify-center space-x-2">
-                    <span>😴 눈 붙이기 (졸기 버튼)</span>
-                </button>
+            <!-- 선생님별 분노 게이지 패널 (6명) -->
+            <div class="w-full bg-slate-900 border-t border-slate-800 p-2.5 z-20">
+                <div class="grid grid-cols-6 gap-1">
+                    
+                    <!-- 부원장쌤 -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-[10px] font-bold text-rose-400 truncate">부원장</span>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700 my-0.5">
+                            <div id="gauge-principal" class="bg-rose-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="text-principal" class="text-[9px] text-slate-400 font-bold">0%</span>
+                    </div>
+
+                    <!-- 2강쌤 -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-[10px] font-bold text-amber-400 truncate">2강쌤</span>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700 my-0.5">
+                            <div id="gauge-class2" class="bg-amber-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="text-class2" class="text-[9px] text-slate-400 font-bold">0%</span>
+                    </div>
+
+                    <!-- 실장쌤 (3강) -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-[10px] font-bold text-cyan-400 truncate">실장쌤</span>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700 my-0.5">
+                            <div id="gauge-manager" class="bg-cyan-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="text-manager" class="text-[9px] text-slate-400 font-bold">0%</span>
+                    </div>
+
+                    <!-- 4강쌤 -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-[10px] font-bold text-blue-400 truncate">4강쌤</span>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700 my-0.5">
+                            <div id="gauge-class4" class="bg-blue-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="text-class4" class="text-[9px] text-slate-400 font-bold">0%</span>
+                    </div>
+
+                    <!-- 5강쌤 -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-[10px] font-bold text-purple-400 truncate">5강쌤</span>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700 my-0.5">
+                            <div id="gauge-class5" class="bg-purple-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="text-class5" class="text-[9px] text-slate-400 font-bold">0%</span>
+                    </div>
+
+                    <!-- 데스크쌤 -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-[10px] font-bold text-slate-400 truncate">데스크쌤</span>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700 my-0.5">
+                            <div id="gauge-desk" class="bg-slate-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="text-desk" class="text-[9px] text-slate-400 font-bold">0%</span>
+                    </div>
+
+                </div>
+
+                <!-- 하단 컨트롤 버튼 영역 -->
+                <div id="action-controls" class="w-full pt-2 space-y-1.5">
+                    <button id="btn-grading-trigger" onclick="startGradingStage()" class="w-full py-2 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-slate-950 font-black text-xs rounded-xl shadow-md transition transform touch-active flex items-center justify-center space-x-1 border border-yellow-300/40">
+                        <span>📝 1강/3강 채점하러 가기</span>
+                    </button>
+                    <button id="btn-talk" class="w-full py-3.5 bg-gradient-to-r from-rose-500 to-red-600 text-white font-black text-base rounded-xl shadow-xl transition transform touch-active select-none border border-rose-400/30 flex items-center justify-center space-x-2">
+                        <span>🗣️ 친구들과 수다 떨기 (꾹 누르기!)</span>
+                    </button>
+                    <button id="btn-sleep" class="hidden w-full py-3.5 bg-gradient-to-r from-indigo-500 to-blue-600 text-white font-black text-base rounded-xl shadow-xl transition transform touch-active select-none border border-indigo-400/30 flex items-center justify-center space-x-2">
+                        <span>😴 칠판 수업 중 졸기 (꾹 누르기!)</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- 게임 실시간 로그 -->
-            <div id="game-log" class="w-full h-16 bg-slate-950/90 border border-slate-800 rounded-xl p-2 overflow-y-auto text-[10px] font-mono text-slate-400 space-y-0.5">
-                <div class="text-emerald-400">> 수해나 수학학원에 입장했습니다.</div>
-            </div>
         </div>
 
-        <!-- 게임 결과 화면 -->
-        <div id="screen-result" class="hidden flex-1 flex flex-col justify-center items-center text-center space-y-5 my-auto">
-            <h2 id="result-title" class="text-3xl font-black">결과</h2>
-            <p id="result-desc" class="text-slate-300 text-xs leading-relaxed px-2"></p>
-            <div class="w-full p-4 bg-slate-950/80 rounded-2xl border border-slate-800 text-left text-xs space-y-2">
-                <div class="flex justify-between"><span>최종 정답률:</span><span id="final-accuracy" class="font-bold text-yellow-400">0%</span></div>
-                <div class="flex justify-between"><span>수업 졸기 적발:</span><span id="final-caught" class="font-bold text-rose-400">0회</span></div>
+        <!-- [3] 결과 화면 / End Screen -->
+        <div id="screen-result" class="hidden flex-col items-center justify-between h-full p-6 text-center z-20 bg-slate-950">
+            <div class="w-full flex flex-col items-center pt-8">
+                <div id="result-icon" class="text-6xl mb-3">🎉</div>
+                <h2 id="result-title" class="text-3xl font-jua text-amber-400 mb-2">무사히 하원 완료!</h2>
+                <p id="result-desc" class="text-sm text-slate-300 leading-relaxed px-2">
+                    축하합니다! 정답률 70% 이상을 유지하며 무사히 수해나 수학학원을 탈출했습니다.
+                </p>
             </div>
-            <button onclick="resetToMainScreen()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 font-black rounded-2xl text-white text-base shadow-lg transition touch-active">
+
+            <!-- 결과 세부 수치 -->
+            <div class="w-full bg-slate-900 border border-slate-800 rounded-2xl p-4 my-auto space-y-2">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-400">최종 정답률</span>
+                    <span id="result-final-accuracy" class="font-bold text-amber-400">85%</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-400">하원 가능 기준</span>
+                    <span class="font-bold text-emerald-400">70% 이상</span>
+                </div>
+            </div>
+
+            <!-- 다시하기 버튼 (메인 화면 복귀) -->
+            <button onclick="returnToMainScreen()" class="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 text-slate-950 font-black text-lg rounded-2xl shadow-xl transition transform touch-active border border-amber-300/40">
                 🔄 메인 화면으로 돌아가기
             </button>
         </div>
 
+        <!-- 게임 규칙 설명 모달 Modal -->
+        <div id="modal-rules" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex flex-col items-center justify-center p-5">
+            <div class="w-full max-h-[85%] bg-slate-900 border border-slate-800 rounded-2xl p-5 overflow-y-auto space-y-4">
+                <h3 class="text-xl font-jua text-amber-400 border-b border-slate-800 pb-2">📖 게임 규칙 안내</h3>
+                <ul class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+                    <li>• <strong class="text-amber-400">하원 조건:</strong> 최종 정답률 <span class="text-emerald-400 font-bold">70% 이상</span>을 달성해야 정시 하원 성공! (60% 이하 시 남아 공부)</li>
+                    <li>• <strong class="text-amber-400">👣 뚜벅... 뚜벅...:</strong> 쌤이 오기 전 70% 확률로 발자국 경고 문구가 표시됩니다.</li>
+                    <li>• <strong class="text-amber-400">랩실 감시 적발:</strong> 선생님이 랩실 내부로 완전히 진입했을 때 수다를 떨다 적발되면 정답률이 차감됩니다.</li>
+                    <li>• <strong class="text-amber-400">복도 시야:</strong> 복도는 50% 확률로 가림막이 열립니다. 복도에 있을 때는 걸리지 않습니다.</li>
+                    <li>• <strong class="text-amber-400">선생님 특성:</strong> 부원장쌤은 분노 게이지 변화폭이 가파르며 적발 시 자리가 멀어집니다.</li>
+                </ul>
+                <button onclick="closeRulesModal()" class="w-full py-3 bg-amber-500 text-slate-950 font-bold text-sm rounded-xl">
+                    확인 및 닫기
+                </button>
+            </div>
+        </div>
+
     </div>
 
+    <!-- 게임 컨트롤 JS 스크립트 -->
     <script>
-        const teachers = [
-            { id: 'principal', name: '부원장쌤', shortName: '부', color: '#ef4444' },
-            { id: 'class2', name: '2강쌤', shortName: '2', color: '#f97316' },
-            { id: 'manager', name: '실장쌤', shortName: '실', color: '#3b82f6' },
-            { id: 'class4', name: '4강쌤', shortName: '4', color: '#8b5cf6' },
-            { id: 'class5', name: '5강쌤', shortName: '5', color: '#ec4899' },
-            { id: 'desk', name: '데스크쌤', shortName: '데', color: '#06b6d4' }
+        // 선생님 객체 설정
+        const TEACHERS = [
+            { id: 'principal', name: '부원장쌤', icon: '부', color: '#f43f5e' },
+            { id: 'class2', name: '2강쌤', icon: '2', color: '#f59e0b' },
+            { id: 'manager', name: '실장쌤', icon: '실', color: '#06b6d4' },
+            { id: 'class4', name: '4강쌤', icon: '4', color: '#3b82f6' },
+            { id: 'class5', name: '5강쌤', icon: '5', color: '#a855f7' },
+            { id: 'desk', name: '데스크쌤', icon: '데', color: '#94a3b8' }
         ];
 
-        let rageLevels = { principal: 20, class2: 40, manager: 5, class4: 65, class5: 70, desk: 0 };
-
-        let currentStage = 'LAB';
+        // 상태 변수
+        let currentStage = 1; // 1: 랩실, 2: 본수업
         let accuracyRate = 100;
-        let mainLoopTimer = null;
         let isTalking = false;
         let isSleeping = false;
         let isSeatMoved = false;
-        let caughtSleepCount = 0;
-        let lastCaughtTeacherId = null;
 
-        let currentLabTeacher = null;
-        let labTeacherTimer = 0;
+        // 학원 진행 시간 (18:00 등원 ~ 22:00 하원 목표)
+        let gameTimeMinutes = 18 * 60; // 18시 (1080분)부터 시작
+
+        // 분노 게이지 (0 ~ 100)
+        let rageLevels = {
+            principal: 10,
+            class2: 25,
+            manager: 5,
+            class4: 50,
+            class5: 50,
+            desk: 0
+        };
+
+        // 랩실 캔버스 관련 변수
+        let labCanvas, labCtx;
+        let activeTeacher = null;
+        let teacherX = 650; // Corridor outside
+        let teacherState = 'idle'; // 'entering', 'inside', 'leaving', 'idle'
+        let corridorOpen = false;
+        let footstepNotice = false;
         let speechBubbleText = '';
         let speechBubbleTimer = 0;
-        let footstepNotice = false;
-        let isCorridorRevealed = false;
-        let teacherX = 350;
-        let teacherY = 130;
-        let managerPatrolDirection = 1;
+        let deskPhoneEvent = false;
+        let phoneTextTimer = 0;
+        let phoneText = '';
 
-        let deskOutsideTimer = 0;
-        let deskOutsideText = "";
-
-        let radarAngle = 0;
-        let radarSpeed = 0.035;
-        let isCaughtThisFrame = false;
-        let lectureAnimationFrameId = null;
-
+        // 타이밍 바 채점 게임 관련
         let coinPos = 0;
-        let coinDir = 1;
+        let coinSpeed = 12; // 빠르고 긴장감 있는 속도
+        let coinDirection = 1;
         let coinAnimFrame = null;
         let currentGradingTeacher = null;
 
-        const friendTalkList = ['숙제 다함??', '집 갈래', '아니 왜 저럼'];
+        // 본수업 레이더 관련
+        let classCanvas, classCtx;
+        let radarAngle = 0;
 
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const timerText = document.getElementById('game-timer');
-        const stageText = document.getElementById('stage-text');
-        const accuracyDisplay = document.getElementById('accuracy-display');
-        const logContainer = document.getElementById('game-log');
-        const btnTalk = document.getElementById('btn-talk');
-        const btnSleep = document.getElementById('btn-sleep');
+        // 초기화 함수
+        window.onload = () => {
+            labCanvas = document.getElementById('labCanvas');
+            labCtx = labCanvas.getContext('2d');
+            classCanvas = document.getElementById('classCanvas');
+            classCtx = classCanvas.getContext('2d');
 
-        function log(msg) {
-            const div = document.createElement('div');
-            div.textContent = `> ${msg}`;
-            logContainer.appendChild(div);
-            logContainer.scrollTop = logContainer.scrollHeight;
+            setupEventListeners();
+        };
+
+        function setupEventListeners() {
+            const talkBtn = document.getElementById('btn-talk');
+            const sleepBtn = document.getElementById('btn-sleep');
+
+            // 수다 버튼 누르고 있기
+            talkBtn.addEventListener('mousedown', () => isTalking = true);
+            talkBtn.addEventListener('mouseup', () => isTalking = false);
+            talkBtn.addEventListener('mouseleave', () => isTalking = false);
+            talkBtn.addEventListener('touchstart', (e) => { e.preventDefault(); isTalking = true; });
+            talkBtn.addEventListener('touchend', (e) => { e.preventDefault(); isTalking = false; });
+
+            // 졸기 버튼 누르고 있기
+            sleepBtn.addEventListener('mousedown', () => isSleeping = true);
+            sleepBtn.addEventListener('mouseup', () => isSleeping = false);
+            sleepBtn.addEventListener('mouseleave', () => isSleeping = false);
+            sleepBtn.addEventListener('touchstart', (e) => { e.preventDefault(); isSleeping = true; });
+            sleepBtn.addEventListener('touchend', (e) => { e.preventDefault(); isSleeping = false; });
         }
 
-        function openRulesModal() { document.getElementById('modal-rules').classList.remove('hidden'); }
-        function closeRulesModal() { document.getElementById('modal-rules').classList.add('hidden'); }
+        function openRulesModal() {
+            document.getElementById('modal-rules').classList.remove('hidden');
+        }
 
-        function setScreen(screenName) {
+        function closeRulesModal() {
+            document.getElementById('modal-rules').classList.add('hidden');
+        }
+
+        function startGame() {
             document.getElementById('screen-main').classList.add('hidden');
-            document.getElementById('screen-game').classList.add('hidden');
-            document.getElementById('screen-result').classList.add('hidden');
-            document.getElementById('screen-grading').classList.add('hidden');
-            document.getElementById('canvas-area').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            document.getElementById('screen-game').classList.add('flex');
 
-            if (screenName === 'main') {
-                document.getElementById('screen-main').classList.remove('hidden');
-            } else if (screenName === 'game') {
-                document.getElementById('screen-game').classList.remove('hidden');
-                document.getElementById('canvas-area').classList.remove('hidden');
-            } else if (screenName === 'grading') {
-                document.getElementById('screen-game').classList.remove('hidden');
-                document.getElementById('screen-grading').classList.remove('hidden');
-            } else if (screenName === 'result') {
-                document.getElementById('screen-result').classList.remove('hidden');
-            }
+            resetGameState();
+            startLabStageLoop();
         }
 
-        function resetToMainScreen() {
-            if (mainLoopTimer) clearInterval(mainLoopTimer);
-            if (coinAnimFrame) cancelAnimationFrame(coinAnimFrame);
-            if (lectureAnimationFrameId) cancelAnimationFrame(lectureAnimationFrameId);
-
-            currentStage = 'LAB';
+        function resetGameState() {
+            currentStage = 1;
             accuracyRate = 100;
             isTalking = false;
             isSleeping = false;
             isSeatMoved = false;
-            caughtSleepCount = 0;
-            lastCaughtTeacherId = null;
-
-            rageLevels = { principal: 20, class2: 40, manager: 5, class4: 65, class5: 70, desk: 0 };
-            currentLabTeacher = null;
-            labTeacherTimer = 0;
-            speechBubbleText = '';
-            speechBubbleTimer = 0;
-            footstepNotice = false;
-            isCorridorRevealed = false;
-
+            gameTimeMinutes = 18 * 60; // 18:00 시작
+            rageLevels = { principal: 15, class2: 25, manager: 5, class4: 50, class5: 50, desk: 0 };
             updateAccuracyUI();
-            logContainer.innerHTML = '<div class="text-emerald-400">> 수해나 수학학원에 입장했습니다.</div>';
-            setScreen('main');
+            updateTimeUI();
+            updateRageGauges();
         }
 
+        function updateAccuracyUI() {
+            document.getElementById('accuracy-display').textContent = `${accuracyRate}%`;
+        }
+
+        function updateTimeUI() {
+            const hours = Math.floor(gameTimeMinutes / 60);
+            const mins = Math.floor(gameTimeMinutes % 60);
+            const formattedTime = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+            document.getElementById('clock-text').textContent = formattedTime;
+        }
+
+        // 분노 게이지 계산 및 UI 업데이트
+        function updateRageGauges() {
+            // 부원장쌤: 분노 게이지가 매우 가파르고 빠르게 위아래로 폭등/폭락
+            rageLevels.principal += (Math.random() - 0.5) * 8.5;
+            // 2강쌤: 중간 수준에서 일정하게 변동
+            rageLevels.class2 += (Math.random() - 0.48) * 2.5;
+            // 실장쌤 (3강): 거의 변화 없음
+            rageLevels.manager += (Math.random() - 0.5) * 0.4;
+            // 4강쌤: 중상 수치(50 부근)에서 거의 유지
+            rageLevels.class4 += (Math.random() - 0.5) * 1.2;
+            if (rageLevels.class4 < 40) rageLevels.class4 = 42;
+            // 5강쌤: 중상 수치 유지
+            rageLevels.class5 += (Math.random() - 0.5) * 1.2;
+            if (rageLevels.class5 < 40) rageLevels.class5 = 42;
+            // 데스크쌤: 변화 없음 (0%)
+            rageLevels.desk = 0;
+
+            // 경계 범위 조절 (0 ~ 100)
+            TEACHERS.forEach(t => {
+                rageLevels[t.id] = Math.max(0, Math.min(100, rageLevels[t.id]));
+                const gaugeEl = document.getElementById(`gauge-${t.id}`);
+                const textEl = document.getElementById(`text-${t.id}`);
+                if (gaugeEl && textEl) {
+                    const val = Math.floor(rageLevels[t.id]);
+                    gaugeEl.style.width = `${val}%`;
+                    textEl.textContent = `${val}%`;
+                }
+            });
+        }
+
+        // [1] 랩실 (확인학습) 메인 게임 루프
+        function startLabStageLoop() {
+            let lastTime = performance.now();
+
+            function loop(now) {
+                const dt = (now - lastTime) / 1000;
+                lastTime = now;
+
+                if (currentStage === 1) {
+                    updateLabLogic(dt);
+                    renderLabCanvas();
+                    requestAnimationFrame(loop);
+                }
+            }
+            requestAnimationFrame(loop);
+        }
+
+        function updateLabLogic(dt) {
+            updateRageGauges();
+
+            // 시간 흐름 (1초당 약 3.5분 증가 -> 랩실 시간이 조금 더 빠르게 흐름)
+            if (gameTimeMinutes < 20 * 60) {
+                gameTimeMinutes += dt * 3.5;
+                updateTimeUI();
+            }
+
+            // 복도 공개 확률 50%
+            if (Math.random() < 0.01) {
+                corridorOpen = Math.random() < 0.5;
+            }
+
+            // 선생님 방문 이벤트 생성
+            if (teacherState === 'idle' && Math.random() < 0.015) {
+                activeTeacher = TEACHERS[Math.floor(Math.random() * TEACHERS.length)];
+                teacherX = 350; // 복도 위치
+                teacherState = 'entering';
+
+                // 70% 확률로 뚜벅뚜벅 발자국 경고 노출
+                footstepNotice = Math.random() < 0.7;
+
+                // 전화 이벤트 발생 (랩실 밖 복도)
+                if (Math.random() < 0.3 && activeTeacher.id !== 'desk') {
+                    deskPhoneEvent = true;
+                    phoneText = "데스크쌤: 선생님, 이 학생 오늘 학원 못 온답니다!";
+                    phoneTextTimer = 3;
+                    // 전화 시 선생님 분노 상승
+                    rageLevels[activeTeacher.id] = Math.min(100, rageLevels[activeTeacher.id] + 15);
+                }
+            }
+
+            if (phoneTextTimer > 0) {
+                phoneTextTimer -= dt;
+                if (phoneTextTimer <= 0) deskPhoneEvent = false;
+            }
+
+            // 선생님 이동 로직
+            if (teacherState === 'entering') {
+                teacherX -= 1.8;
+                if (teacherX <= 210) { // 랩실 경계선 진입
+                    teacherState = 'inside';
+                }
+            } else if (teacherState === 'inside') {
+                teacherX -= 0.5;
+                if (teacherX <= 140) {
+                    teacherState = 'leaving';
+                }
+            } else if (teacherState === 'leaving') {
+                teacherX += 2.5; // 복도 밖으로 퇴장 이동 효과
+                if (teacherX >= 360) {
+                    teacherState = 'idle';
+                    activeTeacher = null;
+                    footstepNotice = false;
+                    speechBubbleText = '';
+                }
+            }
+
+            // 적발 판정 (선생님이 랩실 내부 x <= 210에 들어왔을 때만 적발!)
+            if (teacherState === 'inside' && activeTeacher && isTalking) {
+                handleCaughtTalking(activeTeacher);
+            }
+
+            if (speechBubbleTimer > 0) {
+                speechBubbleTimer -= dt;
+                if (speechBubbleTimer <= 0) speechBubbleText = '';
+            }
+        }
+
+        // 적발 및 대사 처리
         function handleCaughtTalking(teacher) {
-            if (lastCaughtTeacherId === teacher.id && speechBubbleTimer > 1.5) return;
+            // 한 번 걸리면 바로 대사 출력
+            if (speechBubbleText !== '') return;
 
-            lastCaughtTeacherId = teacher.id;
-            speechBubbleTimer = 3;
-
+            speechBubbleTimer = 2.5;
             const penalty = (teacher.id === 'principal' || teacher.id === 'class5') ? 10 : 5;
             accuracyRate = Math.max(0, accuracyRate - penalty);
             updateAccuracyUI();
@@ -345,528 +516,327 @@
             if (teacher.id === 'principal') {
                 speechBubbleText = "떠들지 마라!";
                 isSeatMoved = true;
-                log(`🚨 [적발] 부원장쌤: "떠들지 마라!" (자리가 멀리 떨어짐 & 정답률 -${penalty}%)`);
             } else if (teacher.id === 'class2') {
                 speechBubbleText = "몸이 좀 돌아가 있는 것 같은데";
-                log(`⚠️ [적발] 2강쌤: "몸이 좀 돌아가 있는 것 같은데" (정답률 -${penalty}%)`);
             } else if (teacher.id === 'manager') {
-                speechBubbleText = ""; 
-                log(`🤫 [적발] 실장쌤이 아무 말 없이 랩실 내부를 서성입니다. (정답률 -${penalty}%)`);
+                speechBubbleText = "..."; // 실장쌤 대사 ... 표기
             } else if (teacher.id === 'class4') {
                 speechBubbleText = "떠들지 마세요";
-                log(`💬 [적발] 4강쌤: "떠들지 마세요" (정답률 -${penalty}%)`);
             } else if (teacher.id === 'class5') {
                 speechBubbleText = "부원장님!";
                 isSeatMoved = true;
-                log(`🚨 [적발] 5강쌤: "부원장님!"을 불러 부원장쌤과 동일하게 자리가 멀리 옮겨짐! (정답률 -${penalty}%)`);
             } else if (teacher.id === 'desk') {
                 speechBubbleText = "어 조용히 해 주세요";
-                log(`💬 [적발] 데스크쌤: "어 조용히 해 주세요" (정답률 -${penalty}%)`);
             }
         }
 
-        function updateAccuracyUI() {
-            accuracyDisplay.textContent = `${accuracyRate}%`;
+        // 랩실 Canvas 렌더링
+        function renderLabCanvas() {
+            labCtx.clearRect(0, 0, 360, 300);
+
+            // 1. 랩실 내부 배경
+            labCtx.fillStyle = '#0f172a';
+            labCtx.fillRect(0, 0, 220, 300);
+
+            // 2. 복도 (가림막 / 50% 공개)
+            if (corridorOpen) {
+                labCtx.fillStyle = '#1e293b';
+                labCtx.fillRect(220, 0, 140, 300);
+                // 복도 안내선
+                labCtx.strokeStyle = '#334155';
+                labCtx.beginPath();
+                labCtx.moveTo(220, 0); labCtx.lineTo(220, 300);
+                labCtx.stroke();
+            } else {
+                // 가려진 복도 블라인드
+                labCtx.fillStyle = '#020617';
+                labCtx.fillRect(220, 0, 140, 300);
+                labCtx.fillStyle = '#64748b';
+                labCtx.font = '11px Noto Sans KR';
+                labCtx.fillText('🔒 복도 블라인드', 235, 150);
+            }
+
+            // 3. 랩실 학생 책상 및 캐릭터
+            const studentX = isSeatMoved ? 40 : 120;
+            const studentY = 180;
+
+            // 책상
+            labCtx.fillStyle = '#b45309';
+            labCtx.fillRect(studentX - 25, studentY + 10, 50, 30);
+
+            // 나 (플레이어) 캐릭터
+            labCtx.fillStyle = isTalking ? '#ef4444' : '#3b82f6';
+            labCtx.beginPath();
+            labCtx.arc(studentX, studentY, 14, 0, Math.PI * 2);
+            labCtx.fill();
+            labCtx.fillStyle = '#ffffff';
+            labCtx.font = 'bold 10px Noto Sans KR';
+            labCtx.fillText('나', studentX - 4, studentY + 4);
+
+            // 플레이어가 수다 떨 때 대사 말풍선
+            if (isTalking) {
+                drawSpeechBubble(labCtx, studentX, studentY - 25, "숙제 다함??");
+            }
+
+            // 주변 친구들 (A, B, C) 및 수다 시 친구들 말풍선 연출
+            const friends = [
+                { x: 50, y: 100, talk: "집 갈래" },
+                { x: 170, y: 100, talk: "아니 왜 저럼" },
+                { x: 60, y: 240, talk: "공부 하기 싫다" }
+            ];
+
+            friends.forEach(f => {
+                labCtx.fillStyle = '#475569';
+                labCtx.beginPath();
+                labCtx.arc(f.x, f.y, 12, 0, Math.PI * 2);
+                labCtx.fill();
+
+                if (isTalking) {
+                    drawSpeechBubble(labCtx, f.x, f.y - 20, f.talk);
+                }
+            });
+
+            // 4. 👣 뚜벅... 뚜벅... 발자국 경고 (70% 확률)
+            if (footstepNotice) {
+                labCtx.fillStyle = '#fbbf24';
+                labCtx.font = 'bold 13px Noto Sans KR';
+                labCtx.fillText('👣 뚜벅... 뚜벅...', 110, 30);
+            }
+
+            // 5. 복도 밖 전화 연출 (데스크쌤)
+            if (deskPhoneEvent) {
+                labCtx.fillStyle = '#f43f5e';
+                labCtx.font = 'bold 11px Noto Sans KR';
+                labCtx.fillText(phoneText, 15, 50);
+            }
+
+            // 6. 선생님 캐릭터 그려주기
+            if (activeTeacher) {
+                labCtx.fillStyle = activeTeacher.color;
+                labCtx.beginPath();
+                labCtx.arc(teacherX, 150, 16, 0, Math.PI * 2);
+                labCtx.fill();
+
+                labCtx.fillStyle = '#ffffff';
+                labCtx.font = 'bold 12px Noto Sans KR';
+                labCtx.fillText(activeTeacher.icon, teacherX - 5, 154);
+
+                // 선생님 말풍선 대사
+                if (speechBubbleText) {
+                    drawSpeechBubble(labCtx, teacherX, 120, speechBubbleText);
+                }
+            }
         }
 
-        function updateRageGauges() {
-            rageLevels.principal += (Math.random() - 0.5) * 20;
-            if (rageLevels.principal < 0) rageLevels.principal = 0;
-            if (rageLevels.principal > 100) rageLevels.principal = 100;
+        // 말풍선 유틸 함수
+        function drawSpeechBubble(ctx, x, y, text) {
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1;
+            const width = ctx.measureText(text).width + 12;
+            ctx.beginPath();
+            ctx.roundRect(x - width / 2, y - 12, width, 20, 6);
+            ctx.fill();
+            ctx.stroke();
 
-            rageLevels.class2 += (Math.random() - 0.5) * 8;
-            if (rageLevels.class2 < 20) rageLevels.class2 = 20;
-            if (rageLevels.class2 > 80) rageLevels.class2 = 80;
-
-            if (Math.random() < 0.05) rageLevels.manager = Math.min(100, rageLevels.manager + 30);
-
-            rageLevels.class4 = 60 + (Math.random() - 0.5) * 10;
-            rageLevels.class5 = 65 + (Math.random() - 0.5) * 10;
-            rageLevels.desk = 0;
-
-            document.getElementById('rage-bar-principal').style.height = `${rageLevels.principal}%`;
-            document.getElementById('rage-bar-class2').style.height = `${rageLevels.class2}%`;
-            document.getElementById('rage-bar-manager').style.height = `${rageLevels.manager}%`;
-            document.getElementById('rage-bar-class4').style.height = `${rageLevels.class4}%`;
-            document.getElementById('rage-bar-class5').style.height = `${rageLevels.class5}%`;
-            document.getElementById('rage-bar-desk').style.height = `${rageLevels.desk}%`;
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 10px Noto Sans KR';
+            ctx.fillText(text, x - width / 2 + 6, y + 2);
         }
 
-        btnTalk.addEventListener('mousedown', () => isTalking = true);
-        btnTalk.addEventListener('mouseup', () => isTalking = false);
-        btnTalk.addEventListener('mouseleave', () => isTalking = false);
-        btnTalk.addEventListener('touchstart', (e) => { e.preventDefault(); isTalking = true; });
-        btnTalk.addEventListener('touchend', (e) => { e.preventDefault(); isTalking = false; });
+        // [미니게임] 타이밍 바 채점 시작 (반복 가능)
+        function startGradingStage() {
+            const teachersForGrading = TEACHERS.filter(t => t.id === 'manager' || t.id === 'principal' || t.id === 'class2');
+            currentGradingTeacher = teachersForGrading[Math.floor(Math.random() * teachersForGrading.length)];
 
-        btnSleep.addEventListener('mousedown', () => isSleeping = true);
-        btnSleep.addEventListener('mouseup', () => isSleeping = false);
-        btnSleep.addEventListener('mouseleave', () => isSleeping = false);
-        btnSleep.addEventListener('touchstart', (e) => { e.preventDefault(); isSleeping = true; });
-        btnSleep.addEventListener('touchend', (e) => { e.preventDefault(); isSleeping = false; });
+            document.getElementById('grading-teacher-title').textContent = `${currentGradingTeacher.name} 채점 진행 중`;
+            document.getElementById('grading-teacher-icon').textContent = currentGradingTeacher.icon;
+            document.getElementById('grading-teacher-icon').style.backgroundColor = currentGradingTeacher.color;
+            document.getElementById('grading-result').textContent = '';
+            document.getElementById('overlay-grading').classList.remove('hidden');
 
-        function startGame() {
-            setScreen('game');
-            startLabStage();
+            // 빠른 타이밍 바 애니메이션 시작
+            coinPos = 0;
+            coinDirection = 1;
+
+            function animateCoin() {
+                coinPos += coinSpeed * coinDirection;
+                if (coinPos >= 92) { coinPos = 92; coinDirection = -1; }
+                if (coinPos <= 0) { coinPos = 0; coinDirection = 1; }
+
+                document.getElementById('coin-bar').style.left = `${coinPos}%`;
+                coinAnimFrame = requestAnimationFrame(animateCoin);
+            }
+            animateCoin();
         }
 
-        function triggerPhoneCallSequence() {
-            const targetTeacher = teachers[Math.floor(Math.random() * (teachers.length - 1))];
-            deskOutsideTimer = 3;
-            deskOutsideText = `데스크쌤: "선생님, 이 학생 오늘 학원 못 온답니다!"`;
-            
+        // 채점 정지 및 최신 정답률 갱신
+        function stopCoin() {
+            if (coinAnimFrame) cancelAnimationFrame(coinAnimFrame);
+
+            const perfectStart = 33;
+            const perfectEnd = 66;
+            let newAccuracy = 0;
+
+            if (coinPos >= perfectStart && coinPos <= perfectEnd) {
+                newAccuracy = Math.floor(75 + Math.random() * 25);
+                document.getElementById('grading-result').innerHTML = `<span class="text-emerald-400">🎯 PERFECT! 정답률 ${newAccuracy}% 획득!</span>`;
+            } else {
+                newAccuracy = Math.floor(25 + Math.random() * 35);
+                document.getElementById('grading-result').innerHTML = `<span class="text-rose-400">⚠️ 아쉬운 타이밍! 정답률 ${newAccuracy}%</span>`;
+            }
+
+            // 재채점 시 나중(최신) 점수로 즉시 교체
+            accuracyRate = newAccuracy;
+            updateAccuracyUI();
+
+            // 틀리면 부원장쌤 분노 상승
+            if (newAccuracy < 60) {
+                rageLevels.principal = Math.min(100, rageLevels.principal + 20);
+            }
+
             setTimeout(() => {
-                if (currentStage === 'LAB') {
-                    speechBubbleTimer = 3;
-                    speechBubbleText = "전화 바꿔주세요";
-                    rageLevels[targetTeacher.id] = Math.min(100, rageLevels[targetTeacher.id] + 20);
-                    log(`📱 [전화 알림] 랩실 밖 데스크쌤 대사 후 ${targetTeacher.name}: "전화 바꿔주세요" (분노 상승)`);
+                document.getElementById('overlay-grading').classList.add('hidden');
+
+                // 정답률이 70% 이상이면 본수업으로 이동, 미만이면 계속 랩실 남음
+                if (accuracyRate >= 70 && currentStage === 1) {
+                    switchToClassStage();
                 }
             }, 1200);
         }
 
-        function startLabStage() {
-            currentStage = 'LAB';
-            stageText.textContent = "확인학습 (18:00~19:30)";
-            btnTalk.classList.remove('hidden');
-            btnSleep.classList.add('hidden');
+        // [스테이지 2] 본수업 (칠판 & 레이더) 이동
+        function switchToClassStage() {
+            currentStage = 2;
+            gameTimeMinutes = 20 * 60; // 본수업 시작 시 20:00 설정
+            updateTimeUI();
 
-            let elapsed = 0;
-            const labTotalDuration = 20;
+            document.getElementById('stage-badge').textContent = '2단계: 본수업 (칠판)';
+            document.getElementById('btn-grading-trigger').classList.add('hidden');
+            document.getElementById('btn-talk').classList.add('hidden');
+            document.getElementById('btn-sleep').classList.remove('hidden');
 
-            if (mainLoopTimer) clearInterval(mainLoopTimer);
+            document.getElementById('labCanvas').classList.add('hidden');
+            document.getElementById('classCanvas').classList.remove('hidden');
 
-            mainLoopTimer = setInterval(() => {
-                elapsed++;
-                const mins = Math.floor((elapsed / labTotalDuration) * 90);
-                const totalMins = 1080 + mins;
-                const displayHour = Math.floor(totalMins / 60);
-                const displayMin = totalMins % 60;
-                timerText.textContent = `${displayHour}:${displayMin < 10 ? '0' + displayMin : displayMin}`;
-
-                updateRageGauges();
-
-                if (labTeacherTimer <= 0) {
-                    if (currentLabTeacher) {
-                        currentLabTeacher = null;
-                        footstepNotice = false;
-                        labTeacherTimer = Math.floor(2 + Math.random() * 3);
-                    } else {
-                        isCorridorRevealed = Math.random() < 0.5;
-
-                        if (Math.random() < 0.70) {
-                            footstepNotice = true;
-                            log("👣 뚜벅... 뚜벅... 선생님 발자국 소리가 들립니다!");
-                        }
-                        currentLabTeacher = teachers[Math.floor(Math.random() * teachers.length)];
-                        labTeacherTimer = Math.floor(4 + Math.random() * 4);
-                        teacherX = 350;
-                        teacherY = 130;
-
-                        if (Math.random() < 0.3) {
-                            triggerPhoneCallSequence();
-                        }
-                    }
-                } else {
-                    labTeacherTimer--;
-                }
-
-                if (elapsed >= labTotalDuration) {
-                    clearInterval(mainLoopTimer);
-                    startGradingStage();
-                }
-            }, 1000);
-
-            requestAnimationFrame(renderLabCanvasLoop);
+            startClassStageLoop();
         }
 
-        function renderLabCanvasLoop() {
-            if (currentStage !== 'LAB') return;
+        function startClassStageLoop() {
+            let lastClassTime = performance.now();
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            function loop(now) {
+                const dt = (now - lastClassTime) / 1000;
+                lastClassTime = now;
 
-            // 랩실 배경
-            ctx.fillStyle = '#1e293b';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                if (currentStage === 2) {
+                    updateClassLogic(dt);
+                    renderClassCanvas();
+                    requestAnimationFrame(loop);
+                }
+            }
+            requestAnimationFrame(loop);
+        }
 
-            // 랩실 창문 및 경계선
-            ctx.strokeStyle = '#475569';
-            ctx.lineWidth = 3;
-            ctx.strokeRect(5, 5, 275, 290);
+        function updateClassLogic(dt) {
+            updateRageGauges();
+            radarAngle += 0.04;
 
-            // 복도 영역
-            if (isCorridorRevealed) {
-                ctx.fillStyle = '#334155';
-                ctx.fillRect(285, 5, 110, 290);
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = 'bold 9px sans-serif';
-                ctx.fillText('🚪 복도 (개방)', 300, 20);
+            // 본수업 시간 진행 (1초당 6분 증가 -> 22:00 하원까지 시원하고 스피디하게 진행)
+            if (gameTimeMinutes < 22 * 60) {
+                gameTimeMinutes += dt * 6;
+                updateTimeUI();
+            }
+
+            // 졸다가 레이더에 적발 시 부원장쌤 분노 폭등 & 정답률 감점
+            if (isSleeping && (radarAngle % (Math.PI * 2) < 0.5)) {
+                accuracyRate = Math.max(0, accuracyRate - 5);
+                rageLevels.principal = Math.min(100, rageLevels.principal + 25);
+                updateAccuracyUI();
+            }
+
+            // 수업 완수 시 (22:00 도달 또는 회전 완수) 하원 결과로 이동
+            if (radarAngle >= Math.PI * 10 || gameTimeMinutes >= 22 * 60) {
+                gameTimeMinutes = 22 * 60; // 22:00 고정
+                updateTimeUI();
+                finishGame();
+            }
+        }
+
+        function renderClassCanvas() {
+            classCtx.clearRect(0, 0, 360, 300);
+
+            // 칠판 배경
+            classCtx.fillStyle = '#064e3b';
+            classCtx.fillRect(20, 20, 320, 160);
+            classCtx.strokeStyle = '#b45309';
+            classCtx.lineWidth = 6;
+            classCtx.strokeRect(20, 20, 320, 160);
+
+            // 칠판 수학 공식
+            classCtx.fillStyle = '#ffffff';
+            classCtx.font = '14px Noto Sans KR';
+            classCtx.fillText('∫ (3x² + 2x) dx = x³ + x² + C', 50, 60);
+            classCtx.fillText('lim (x→∞) (1 + 1/n)^n = e', 50, 90);
+
+            // 선생님 칠판 판서 연출
+            classCtx.fillStyle = '#f59e0b';
+            classCtx.beginPath();
+            classCtx.arc(300, 100, 16, 0, Math.PI * 2);
+            classCtx.fill();
+
+            // 레이더 회전 스캔
+            const cx = 180, cy = 100;
+            classCtx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
+            classCtx.lineWidth = 2;
+            classCtx.beginPath();
+            classCtx.moveTo(cx, cy);
+            classCtx.lineTo(cx + Math.cos(radarAngle) * 140, cy + Math.sin(radarAngle) * 140);
+            classCtx.stroke();
+
+            // 졸기 플레이어 연출
+            classCtx.fillStyle = isSleeping ? '#6366f1' : '#10b981';
+            classCtx.beginPath();
+            classCtx.arc(180, 240, 16, 0, Math.PI * 2);
+            classCtx.fill();
+
+            if (isSleeping) {
+                drawSpeechBubble(classCtx, 180, 210, "😴 zzz...");
+            }
+        }
+
+        // 게임 최종 결과 화면
+        function finishGame() {
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+            document.getElementById('screen-result').classList.add('flex');
+
+            document.getElementById('result-final-accuracy').textContent = `${accuracyRate}%`;
+
+            // 정답률 70% 이상 성공 기준
+            if (accuracyRate >= 70) {
+                document.getElementById('result-icon').textContent = '🎉';
+                document.getElementById('result-title').textContent = '정시 하원 성공!';
+                document.getElementById('result-desc').textContent = '축하합니다! 22:00 정각에 수해나 수학학원에서 무사히 하원했습니다.';
             } else {
-                ctx.fillStyle = '#0f172a';
-                ctx.fillRect(285, 5, 110, 290);
-                ctx.fillStyle = '#475569';
-                ctx.font = 'bold 9px sans-serif';
-                ctx.fillText('🔒 복도 (가려짐)', 300, 20);
+                document.getElementById('result-icon').textContent = '📖';
+                document.getElementById('result-title').textContent = '남아서 보충 공부...';
+                document.getElementById('result-desc').textContent = '정답률이 70% 미만입니다. 22:00 이후에도 랩실에 남아 보충 재시험을 진행해야 합니다.';
             }
-
-            // 복도 데스크쌤 전화 알림
-            if (deskOutsideTimer > 0 && isCorridorRevealed) {
-                deskOutsideTimer -= 0.016;
-                ctx.fillStyle = '#06b6d4';
-                ctx.beginPath();
-                ctx.arc(330, 45, 11, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 9px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('데', 330, 48);
-                ctx.textAlign = 'left';
-
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(225, 62, 165, 20);
-                ctx.fillStyle = '#0f172a';
-                ctx.font = 'bold 8px sans-serif';
-                ctx.fillText("데스크쌤: 오늘 못 온답니다!", 230, 75);
-            }
-
-            // 발자국 소리 경고
-            if (footstepNotice && !currentLabTeacher) {
-                ctx.fillStyle = '#f59e0b';
-                ctx.font = 'bold 13px sans-serif';
-                ctx.fillText('👣 뚜벅... 뚜벅...', 100, 30);
-            }
-
-            // 학생 좌석
-            const students = [
-                { name: '친구A', x: 60, y: 210 },
-                { name: '친구B', x: 130, y: 210 },
-                { name: '친구C', x: 200, y: 210 }
-            ];
-
-            students.forEach((s, idx) => {
-                ctx.fillStyle = '#3b82f6';
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, 13, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 9px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(s.name, s.x, s.y + 3);
-                ctx.textAlign = 'left';
-
-                if (isTalking) {
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(s.x - 22, s.y - 30, 50, 16);
-                    ctx.fillStyle = '#0f172a';
-                    ctx.font = 'bold 8px sans-serif';
-                    ctx.fillText(friendTalkList[idx], s.x - 18, s.y - 19);
-                }
-            });
-
-            // 플레이어 좌석
-            const pX = isSeatMoved ? 130 : 60;
-            const pY = isSeatMoved ? 110 : 110;
-
-            ctx.fillStyle = '#10b981';
-            ctx.beginPath();
-            ctx.arc(pX, pY, 14, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 10px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('나', pX, pY + 3);
-            ctx.textAlign = 'left';
-
-            if (isTalking) {
-                ctx.fillStyle = '#fde047';
-                ctx.fillRect(pX - 20, pY - 32, 45, 16);
-                ctx.fillStyle = '#0f172a';
-                ctx.font = 'bold 8px sans-serif';
-                ctx.fillText('속닥속닥', pX - 16, pY - 21);
-            }
-
-            // 선생님 랩실 진입 이동 애니메이션
-            if (currentLabTeacher) {
-                if (labTeacherTimer > 1) {
-                    if (teacherX > 220) teacherX -= 2.5;
-                } else {
-                    teacherX += 3;
-                }
-
-                const isInLab = teacherX <= 270;
-                if (isTalking && isInLab) {
-                    handleCaughtTalking(currentLabTeacher);
-                }
-
-                if (currentLabTeacher.id === 'manager' && isInLab) {
-                    teacherY += managerPatrolDirection * 1.2;
-                    if (teacherY > 240 || teacherY < 50) managerPatrolDirection *= -1;
-                }
-
-                if (teacherX > 275 && !isCorridorRevealed) {
-                    // 복도가 가려진 경우 비노출
-                } else {
-                    ctx.fillStyle = currentLabTeacher.color;
-                    ctx.beginPath();
-                    ctx.arc(teacherX, teacherY, 15, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 10px sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(currentLabTeacher.shortName, teacherX, teacherY + 3);
-                    ctx.textAlign = 'left';
-
-                    if (speechBubbleTimer > 0 && speechBubbleText !== "") {
-                        speechBubbleTimer -= 0.016;
-                        ctx.fillStyle = '#ffffff';
-                        ctx.fillRect(teacherX - 110, teacherY - 35, 120, 24);
-                        ctx.fillStyle = '#000000';
-                        ctx.font = 'bold 8px sans-serif';
-                        ctx.fillText(speechBubbleText, teacherX - 105, teacherY - 20);
-                    }
-                }
-            }
-
-            requestAnimationFrame(renderLabCanvasLoop);
         }
 
-        function startGradingStage() {
-            currentStage = 'GRADING';
-            stageText.textContent = "숙제 채점 진행 중";
-            setScreen('grading');
+        // 메인 화면으로 되돌아가기 (다시 도전하기)
+        function returnToMainScreen() {
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-main').classList.remove('hidden');
 
-            const isManagerRoom = Math.random() < 0.5;
-            currentGradingTeacher = isManagerRoom ? teachers.find(t => t.id === 'manager') : teachers.find(t => t.id === 'principal');
-
-            document.getElementById('grading-room-title').textContent = isManagerRoom ? '3강 채점실' : '1강 채점실';
-            document.getElementById('grading-teacher-title').textContent = `${currentGradingTeacher.name} 채점 진행 중`;
-
-            const teacherBadge = document.getElementById('grading-teacher-badge');
-            teacherBadge.textContent = currentGradingTeacher.shortName;
-            teacherBadge.style.backgroundColor = currentGradingTeacher.color;
-
-            const musicNotes = document.getElementById('music-notes');
-            if (isManagerRoom) musicNotes.classList.remove('hidden');
-            else musicNotes.classList.add('hidden');
-
-            document.getElementById('grading-speech-bubble').classList.add('hidden');
-            document.getElementById('grading-result').textContent = '';
-
-            coinPos = 0;
-            coinDir = 1;
-            const coinEl = document.getElementById('coin');
-
-            function animCoin() {
-                coinPos += 3.5 * coinDir;
-                if (coinPos >= 90) coinDir = -1;
-                if (coinPos <= 0) coinDir = 1;
-                coinEl.style.left = `${coinPos}%`;
-                coinAnimFrame = requestAnimationFrame(animCoin);
-            }
-            if (coinAnimFrame) cancelAnimationFrame(coinAnimFrame);
-            animCoin();
-        }
-
-        function stopCoin() {
-            if (coinAnimFrame) cancelAnimationFrame(coinAnimFrame);
-
-            const perfectZoneStart = 33.3;
-            const perfectZoneEnd = 66.6;
-            let hitAccuracy = 0;
-
-            if (coinPos >= perfectZoneStart && coinPos <= perfectZoneEnd) {
-                hitAccuracy = Math.floor(75 + Math.random() * 25);
-                document.getElementById('grading-result').innerHTML = `<span class="text-emerald-400">🎯 PERFECT! 정답률 ${hitAccuracy}% 획득!</span>`;
-            } else {
-                hitAccuracy = Math.floor(20 + Math.random() * 35);
-                document.getElementById('grading-result').innerHTML = `<span class="text-rose-400">⚠️ 아쉬운 타이밍! 정답률 ${hitAccuracy}%</span>`;
-            }
-
-            accuracyRate = Math.round((accuracyRate + hitAccuracy) / 2);
-            updateAccuracyUI();
-
-            const isBadScore = hitAccuracy < 50;
-
-            if (currentGradingTeacher.id === 'manager') {
-                const speechEl = document.getElementById('grading-speech-bubble');
-                speechEl.classList.remove('hidden');
-                if (isBadScore) {
-                    speechEl.textContent = '언니 와 이래 많이 틀렸노';
-                } else {
-                    speechEl.textContent = '🎵 (흥얼흥얼 노래를 부르십니다~) 🎶';
-                }
-            } else if (currentGradingTeacher.id === 'principal') {
-                const speechEl = document.getElementById('grading-speech-bubble');
-                if (isBadScore) {
-                    speechEl.classList.remove('hidden');
-                    if (rageLevels.principal > 50) speechEl.textContent = '지금 사람 많은데 이렇게 많이 풀어오면...';
-                    else speechEl.textContent = '어머 많이 틀렸네!';
-                } else {
-                    speechEl.classList.add('hidden');
-                }
-            }
-
-            log(`숙제 채점 완료: 최종 정답률 ${accuracyRate}%`);
-
-            setTimeout(() => {
-                startLectureStage();
-            }, 2000);
-        }
-
-        function startLectureStage() {
-            currentStage = 'LECTURE';
-            stageText.textContent = "본수업 (19:30~21:00)";
-            setScreen('game');
-            btnTalk.classList.add('hidden');
-            btnSleep.classList.remove('hidden');
-
-            log("본수업 시작 (부원장쌤 전담 수업)");
-
-            let lectureDuration = 20; 
-            let elapsed = 0;
-
-            if (lectureAnimationFrameId) cancelAnimationFrame(lectureAnimationFrameId);
-            renderLectureCanvasScene();
-
-            if (mainLoopTimer) clearInterval(mainLoopTimer);
-
-            mainLoopTimer = setInterval(() => {
-                elapsed++;
-                const mins = Math.floor((elapsed / lectureDuration) * 90);
-                const totalMins = 1170 + mins;
-                const displayHour = Math.floor(totalMins / 60);
-                const displayMin = totalMins % 60;
-                timerText.textContent = `${displayHour}:${displayMin < 10 ? '0' + displayMin : displayMin}`;
-
-                if (elapsed >= lectureDuration) {
-                    clearInterval(mainLoopTimer);
-                    if (lectureAnimationFrameId) cancelAnimationFrame(lectureAnimationFrameId);
-                    finishGame();
-                }
-            }, 1000);
-        }
-
-        function renderLectureCanvasScene() {
-            if (currentStage !== 'LECTURE') return;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // 칠판
-            ctx.fillStyle = '#064e3b';
-            ctx.fillRect(80, 15, 240, 70);
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.fillText('1강 개념 수업 (부원장쌤)', 135, 40);
-            ctx.font = '9px sans-serif';
-            ctx.fillStyle = '#a7f3d0';
-            ctx.fillText('∫ f(x)dx = F(x) + C', 150, 60);
-
-            const teacherX = 200;
-            const teacherY = 100;
-            ctx.fillStyle = '#ef4444';
-            ctx.beginPath();
-            ctx.arc(teacherX, teacherY, 15, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 9px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('부', teacherX, teacherY + 3);
-            ctx.textAlign = 'left';
-
-            radarAngle += radarSpeed;
-            if (radarAngle > Math.PI * 0.75 || radarAngle < -Math.PI * 0.75) {
-                radarSpeed = -radarSpeed;
-            }
-
-            const sweepAngle = Math.PI / 4;
-            const currentDirection = Math.PI / 2 + radarAngle;
-
-            ctx.fillStyle = 'rgba(239, 68, 68, 0.35)';
-            ctx.beginPath();
-            ctx.moveTo(teacherX, teacherY);
-            ctx.arc(teacherX, teacherY, 170, currentDirection - sweepAngle / 2, currentDirection + sweepAngle / 2);
-            ctx.closePath();
-            ctx.fill();
-
-            const myX = 200;
-            const myY = 240;
-
-            ctx.fillStyle = isSleeping ? '#6366f1' : '#10b981';
-            ctx.beginPath();
-            ctx.arc(myX, myY, 14, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 9px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(isSleeping ? '😴 나' : '나', myX, myY + 3);
-            ctx.textAlign = 'left';
-
-            const angleToPlayer = Math.atan2(myY - teacherY, myX - teacherX);
-            let angleDiff = Math.abs(angleToPlayer - currentDirection);
-            while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-            angleDiff = Math.abs(angleDiff);
-
-            if (angleDiff < sweepAngle / 2 && isSleeping) {
-                if (!isCaughtThisFrame) {
-                    isCaughtThisFrame = true;
-                    caughtSleepCount++;
-                    accuracyRate = Math.max(0, accuracyRate - 15);
-                    updateAccuracyUI();
-                    
-                    log(`🚨 [자다 적발!] 부원장쌤: "자지 마라!" (경고 ${caughtSleepCount}/3회)`);
-
-                    if (caughtSleepCount >= 3) {
-                        clearInterval(mainLoopTimer);
-                        cancelAnimationFrame(lectureAnimationFrameId);
-                        finishGame(true);
-                        return;
-                    }
-
-                    setTimeout(() => { isCaughtThisFrame = false; }, 2000);
-                }
-            }
-
-            if (isCaughtThisFrame) {
-                ctx.fillStyle = '#ef4444';
-                ctx.font = 'bold 14px sans-serif';
-                ctx.fillText('⚡ 부원장쌤: "자지 마라!"', 130, 140);
-            }
-
-            lectureAnimationFrameId = requestAnimationFrame(renderLectureCanvasScene);
-        }
-
-        function finishGame(forcedFail = false) {
-            setScreen('result');
-            const resultTitle = document.getElementById('result-title');
-            const resultDesc = document.getElementById('result-desc');
-
-            document.getElementById('final-accuracy').textContent = `${accuracyRate}%`;
-            document.getElementById('final-caught').textContent = `${caughtSleepCount}회`;
-
-            const isLowAccuracy = accuracyRate <= 60;
-
-            if (forcedFail || caughtSleepCount >= 3 || isLowAccuracy) {
-                resultTitle.textContent = "😭 남게 되었습니다!";
-                resultTitle.className = "text-3xl font-black text-rose-500";
-                
-                if (caughtSleepCount >= 3) {
-                    resultDesc.textContent = "수업 시간 중 3회 이상 졸다가 부원장쌤에게 적발되어 남아서 공부해야 합니다!";
-                } else {
-                    resultDesc.textContent = `최종 정답률이 ${accuracyRate}%로 기준치(60% 초과) 미만이므로 남아서 공부해야 합니다!`;
-                }
-            } else {
-                resultTitle.textContent = "🎉 무사히 하교 성공!";
-                resultTitle.className = "text-3xl font-black text-emerald-400";
-                resultDesc.textContent = `정답률 ${accuracyRate}% 달성! 무사히 확인학습과 본수업을 마치고 하교에 성공했습니다!`;
-            }
+            // 버튼 및 UI 원상 복구
+            document.getElementById('btn-grading-trigger').classList.remove('hidden');
+            document.getElementById('btn-talk').classList.remove('hidden');
+            document.getElementById('btn-sleep').classList.add('hidden');
+            document.getElementById('labCanvas').classList.remove('hidden');
+            document.getElementById('classCanvas').classList.add('hidden');
         }
     </script>
 </body>
