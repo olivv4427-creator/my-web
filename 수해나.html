@@ -141,9 +141,9 @@
             <div class="w-full bg-slate-900 border-t border-slate-800 p-2.5 z-20">
                 <div class="grid grid-cols-6 gap-1">
                     
-                    <!-- 부원장쌤 -->
+                    <!-- 부원장/실장쌤 -->
                     <div class="flex flex-col items-center">
-                        <span class="text-[10px] font-bold text-rose-400 truncate">부원장</span>
+                        <span class="text-[9px] font-bold text-rose-400 truncate">부원장(실장)</span>
                         <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700 my-0.5">
                             <div id="gauge-principal" class="bg-rose-500 h-full w-0 transition-all duration-300"></div>
                         </div>
@@ -159,9 +159,9 @@
                         <span id="text-class2" class="text-[9px] text-slate-400 font-bold">0%</span>
                     </div>
 
-                    <!-- 실장쌤 (3강) -->
+                    <!-- 3강쌤 -->
                     <div class="flex flex-col items-center">
-                        <span class="text-[10px] font-bold text-cyan-400 truncate">실장쌤</span>
+                        <span class="text-[10px] font-bold text-cyan-400 truncate">3강쌤</span>
                         <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700 my-0.5">
                             <div id="gauge-manager" class="bg-cyan-500 h-full w-0 transition-all duration-300"></div>
                         </div>
@@ -264,9 +264,9 @@
     <script>
         // 선생님 객체 설정
         const TEACHERS = [
-            { id: 'principal', name: '부원장쌤', icon: '부', color: '#f43f5e' },
+            { id: 'principal', name: '부원장쌤(실장쌤)', icon: '실', color: '#f43f5e' },
             { id: 'class2', name: '2강쌤', icon: '2', color: '#f59e0b' },
-            { id: 'manager', name: '실장쌤', icon: '실', color: '#06b6d4' },
+            { id: 'manager', name: '3강쌤', icon: '3', color: '#06b6d4' },
             { id: 'class4', name: '4강쌤', icon: '4', color: '#3b82f6' },
             { id: 'class5', name: '5강쌤', icon: '5', color: '#a855f7' },
             { id: 'desk', name: '데스크쌤', icon: '데', color: '#94a3b8' }
@@ -646,7 +646,11 @@
 
         // [미니게임] 타이밍 바 채점 시작 (반복 가능)
         function startGradingStage() {
-            const teachersForGrading = TEACHERS.filter(t => t.id === 'manager' || t.id === 'principal' || t.id === 'class2');
+            // 1강(부원장쌤/2강쌤 라인) 및 3강 선생님 중 채점 담당자 지정
+            const teachersForGrading = [
+                { id: 'class1', name: '1강쌤', icon: '1', color: '#f59e0b' },
+                { id: 'class3', name: '3강쌤', icon: '3', color: '#06b6d4' }
+            ];
             currentGradingTeacher = teachersForGrading[Math.floor(Math.random() * teachersForGrading.length)];
 
             document.getElementById('grading-teacher-title').textContent = `${currentGradingTeacher.name} 채점 진행 중`;
